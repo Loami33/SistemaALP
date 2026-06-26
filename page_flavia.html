@@ -1,0 +1,605 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flávia Corretora de Imóveis | Bauru</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tabler-icons-iconfont@latest/dist/tabler-icons.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --color-background-primary: #060606;
+      --color-background-secondary: #101010;
+      --color-border-tertiary: rgba(255,255,255,0.08);
+      --color-text-primary: #f5f5f5;
+      --color-text-secondary: rgba(255,255,255,0.65);
+      --color-accent: #c4a064;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--color-background-primary);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .container {
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: 0 1.25rem;
+    }
+
+    .hero {
+      background: #0a0a0a;
+      color: #fff;
+      padding: 3rem 0 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: rgba(196,160,100,0.08);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -80px;
+      left: -40px;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: rgba(196,160,100,0.05);
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      border: 1px solid rgba(196,160,100,0.4);
+      padding: 5px 14px;
+      border-radius: 220px;
+      margin-bottom: 1.2rem;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 4vw, 3.8rem);
+      font-weight: 700;
+      line-height: 1.05;
+      margin-bottom: 0.75rem;
+      color: #fff;
+    }
+
+    .hero h1 span {
+      color: var(--color-accent);
+    }
+
+    .hero p {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.72);
+      font-weight: 300;
+      margin-bottom: 2rem;
+      max-width: 560px;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-gold,
+    .btn-outline,
+    .btn-wpp {
+      transition: all 0.22s ease;
+    }
+
+    .btn-gold {
+      background: var(--color-accent);
+      color: #0a0a0a;
+      border: none;
+      padding: 13px 24px;
+      border-radius: 999px;
+      font-size: 0.94rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-gold:hover {
+      filter: brightness(1.05);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.28);
+      padding: 13px 24px;
+      border-radius: 999px;
+      font-size: 0.94rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255,255,255,0.06);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.08);
+      margin-top: 2.5rem;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .stat {
+      background: #111;
+      padding: 1.1rem;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      color: var(--color-accent);
+      font-weight: 700;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+
+    .section {
+      padding: 2.5rem 0;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      color: var(--color-text-primary);
+    }
+
+    .section-sub {
+      font-size: 0.95rem;
+      color: var(--color-text-secondary);
+      margin-bottom: 1.5rem;
+      max-width: 640px;
+    }
+
+    .gold-line {
+      width: 42px;
+      height: 3px;
+      background: var(--color-accent);
+      margin: 0.6rem 0 1.1rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--color-background-secondary);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--color-border-tertiary);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.12);
+    }
+
+    .card-img {
+      width: 100%;
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: linear-gradient(135deg,#1a1a2e,#2d2d44);
+    }
+
+    .card-img-res { background: linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); }
+    .card-img-com { background: linear-gradient(135deg,#1c1008 0%,#3d2b0e 100%); }
+    .card-img-apt { background: linear-gradient(135deg,#0d1b0d 0%,#1a3a1a 100%); }
+    .card-img-ter { background: linear-gradient(135deg,#1a0d0d 0%,#3a1a1a 100%); }
+
+    .card-icon {
+      font-size: 2.2rem;
+      color: rgba(196,160,100,0.75);
+    }
+
+    .card-tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: var(--color-accent);
+      color: #0a0a0a;
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+
+    .card-body {
+      padding: 16px 18px;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 6px;
+    }
+
+    .card-loc {
+      font-size: 0.85rem;
+      color: var(--color-text-secondary);
+    }
+
+    .card-loc i {
+      font-size: 1rem;
+      vertical-align: -1px;
+      margin-right: 6px;
+    }
+
+    .card-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      margin-top: 10px;
+    }
+
+    .sobre {
+      background: #0a0a0a;
+      color: #fff;
+      padding: 2.5rem 0;
+      border-radius: 24px;
+      overflow: hidden;
+    }
+
+    .sobre-inner {
+      display: grid;
+      grid-template-columns: 80px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .sobre-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg,var(--color-accent),#8a6a30);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.65rem;
+      color: #fff;
+      font-weight: 700;
+      border: 2px solid rgba(196,160,100,0.35);
+    }
+
+    .sobre h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      color: #fff;
+      margin-bottom: 0.25rem;
+    }
+
+    .sobre p {
+      font-size: 0.98rem;
+      color: rgba(255,255,255,0.76);
+      line-height: 1.75;
+      font-weight: 300;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 1.4rem;
+    }
+
+    .chip {
+      font-size: 0.78rem;
+      border: 1px solid rgba(196,160,100,0.35);
+      color: var(--color-accent);
+      padding: 6px 12px;
+      border-radius: 999px;
+    }
+
+    .contact {
+      padding: 2.5rem 0;
+    }
+
+    .contact h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .contact-cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 1.2rem;
+    }
+
+    .contact-card {
+      background: var(--color-background-secondary);
+      border: 1px solid var(--color-border-tertiary);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      min-height: 128px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .contact-card i {
+      font-size: 1.6rem;
+      color: var(--color-accent);
+    }
+
+    .contact-card p {
+      font-size: 0.82rem;
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .contact-card strong {
+      font-size: 1rem;
+      color: var(--color-text-primary);
+    }
+
+    .btn-wpp {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #25d366;
+      color: #0a0a0a;
+      text-align: center;
+      padding: 14px 22px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-top: 1.2rem;
+      width: 100%;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-wpp i {
+      margin-right: 8px;
+      font-size: 1.05rem;
+    }
+
+    .footer {
+      background: #090909;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 1.2rem;
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .footer span {
+      color: var(--color-accent);
+    }
+
+    @media (max-width: 780px) {
+      .cards,
+      .contact-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: 2.5rem 0 2rem;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .sobre-inner {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        padding: 0 1rem;
+      }
+
+      .hero h1 {
+        font-size: 2.4rem;
+      }
+
+      .hero p {
+        max-width: 100%;
+      }
+
+      .btn-gold,
+      .btn-outline {
+        width: 100%;
+      }
+
+      .card {
+        border-radius: 14px;
+      }
+
+      .contact-card {
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="hero" aria-label="Apresentação da corretora Flávia">
+      <div class="badge">Corretora de Imóveis · Bauru</div>
+      <h1>Encontre o imóvel<br>dos seus <span>sonhos</span></h1>
+      <p>Residencial e comercial. Atendimento personalizado para você comprar, vender ou alugar com segurança e confiança.</p>
+      <div class="hero-btns">
+        <a class="btn-gold" href="#contato"><i class="ti ti-message" aria-hidden="true"></i> Falar com a Flávia</a>
+        <a class="btn-outline" href="#imoveis">Ver imóveis</a>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-num">8+</div>
+          <div class="stat-label">Anos</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">200+</div>
+          <div class="stat-label">Negócios</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Dedicação</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="imoveis">
+      <div class="section-title">Imóveis em destaque</div>
+      <div class="gold-line"></div>
+      <div class="section-sub">Residencial e comercial em Bauru e região.</div>
+      <div class="cards">
+        <article class="card">
+          <div class="card-img card-img-res">
+            <i class="ti ti-building-estate card-icon" aria-hidden="true"></i>
+            <span class="card-tag">Residencial</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Casa 3 quartos</div>
+            <div class="card-loc"><i class="ti ti-map-pin" aria-hidden="true"></i>Jardim Europa</div>
+            <div class="card-price">R$ 480.000</div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-img card-img-com">
+            <i class="ti ti-building-store card-icon" aria-hidden="true"></i>
+            <span class="card-tag">Comercial</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Sala comercial</div>
+            <div class="card-loc"><i class="ti ti-map-pin" aria-hidden="true"></i>Centro</div>
+            <div class="card-price">R$ 320.000</div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-img card-img-apt">
+            <i class="ti ti-building card-icon" aria-hidden="true"></i>
+            <span class="card-tag">Apartamento</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Apto 2 quartos</div>
+            <div class="card-loc"><i class="ti ti-map-pin" aria-hidden="true"></i>Higienópolis</div>
+            <div class="card-price">R$ 290.000</div>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-img card-img-ter">
+            <i class="ti ti-trees card-icon" aria-hidden="true"></i>
+            <span class="card-tag">Terreno</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Terreno 500m²</div>
+            <div class="card-loc"><i class="ti ti-map-pin" aria-hidden="true"></i>Novo Bauru</div>
+            <div class="card-price">R$ 180.000</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="sobre">
+      <div class="sobre-inner">
+        <div class="sobre-avatar">F</div>
+        <div>
+          <h2>Flávia</h2>
+          <div class="gold-line"></div>
+          <p>Corretora de imóveis apaixonada por conectar pessoas ao lugar certo. Com anos de experiência no mercado de Bauru, ofereço um atendimento diferenciado, honesto e sem pressão.</p>
+          <div class="chips">
+            <span class="chip">CRECI/SP N° 328455-F</span>
+            <span class="chip">Financiamento</span>
+            <span class="chip">Avaliação gratuita</span>
+            <span class="chip">Imóvel na planta</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contato">
+      <h2 class="section-title">Entre em contato</h2>
+      <div class="gold-line"></div>
+      <p style="font-size:13px;color:var(--color-text-secondary);">Atendimento rápido e sem compromisso</p>
+      <div class="contact-cards">
+        <a class="contact-card" href="tel:+5514998973200" style="text-decoration:none;">
+          <i class="ti ti-phone" aria-hidden="true"></i>
+          <p>Telefone</p>
+          <strong>(14) 9 9897-3200</strong>
+        </a>
+        <div class="contact-card">
+          <i class="ti ti-map-pin" aria-hidden="true"></i>
+          <p>Cidade</p>
+          <strong>Bauru - SP</strong>
+        </div>
+        <div class="contact-card">
+          <i class="ti ti-clock" aria-hidden="true"></i>
+          <p>Horário</p>
+          <strong>Seg–Sáb 8h–18h</strong>
+        </div>
+        <div class="contact-card">
+          <i class="ti ti-brand-instagram" aria-hidden="true"></i>
+          <p>Instagram</p>
+          <strong>@flaviacorretora</strong>
+        </div>
+      </div>
+      <a class="btn-wpp" href="https://wa.me/5514998973200" target="_blank" rel="noreferrer noopener"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i>Chamar no WhatsApp · (14) 9 9897-3200</a>
+    </section>
+
+    <footer class="footer">Flávia · <span>Corretora de Imóveis</span> · Bauru SP · CRECI/SP N° 328455-F</footer>
+  </div>
+</body>
+</html>

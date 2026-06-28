@@ -726,7 +726,7 @@
         </div>
       </div>
       <div class="header-actions">
-        <a href="page_flavia.html" target="_blank" class="btn-header">
+        <a href="/" target="_blank" class="btn-header">
           <i class="ti ti-external-link"></i> Ver Site
         </a>
         <button onclick="logout()" class="btn-header">
@@ -920,12 +920,12 @@
 
     // ── AUTH ──
     if (sessionStorage.getItem('flavia_auth') !== 'true') {
-      window.location.href = 'login.html';
+      window.location.href = '/login';
     }
 
     function logout() {
       sessionStorage.removeItem('flavia_auth');
-      window.location.href = 'login.html';
+      window.location.href = '/login';
     }
 
     // ── STORAGE ──

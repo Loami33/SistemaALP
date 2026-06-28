@@ -193,7 +193,7 @@
       </form>
 
       <hr class="divider">
-      <a class="back-link" href="page_flavia.html">
+      <a class="back-link" href="/">
         <i class="ti ti-arrow-left"></i> Voltar para o site
       </a>
     </div>
@@ -201,7 +201,7 @@
 
   <script>
     if (sessionStorage.getItem('flavia_auth') === 'true') {
-      window.location.href = 'admin.html';
+      window.location.href = '/admin';
     }
 
     document.getElementById('loginForm').addEventListener('submit', function (e) {
@@ -212,7 +212,7 @@
 
       if (user === 'flavia' && pass === 'imoveis2025') {
         sessionStorage.setItem('flavia_auth', 'true');
-        window.location.href = 'admin.html';
+        window.location.href = '/admin';
       } else {
         error.style.display = 'block';
         document.getElementById('password').value = '';

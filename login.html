@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Flávia Administração</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tabler-icons-iconfont@latest/dist/tabler-icons.min.css" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #eef0eb;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .login-wrapper {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 8px 48px rgba(60,80,40,0.13);
+    }
+
+    .login-logo {
+      width: 68px;
+      height: 68px;
+      background: linear-gradient(135deg, #5c6b47, #8a9b7a);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      color: #fff;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 4px 20px rgba(92,107,71,0.28);
+    }
+
+    .login-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.45rem;
+      color: #2c3520;
+      text-align: center;
+      margin-bottom: 0.3rem;
+    }
+
+    .login-sub {
+      font-size: 0.88rem;
+      color: #7a8a6a;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #4a5c3a;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #8a9b7a;
+      font-size: 1rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 11px 12px 11px 36px;
+      border: 1.5px solid #d6dece;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: #2c3520;
+      background: #f6f8f3;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: #5c6b47;
+      background: #fff;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 13px;
+      background: #5c6b47;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.2s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-login:hover { background: #4a5c3a; }
+    .btn-login:active { transform: scale(0.98); }
+
+    .error-msg {
+      display: none;
+      background: #fde8e8;
+      color: #c0392b;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.88rem;
+      margin-top: 1rem;
+      text-align: center;
+      border: 1px solid #fca5a5;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #eef0eb;
+      margin: 1.5rem 0 1rem;
+    }
+
+    .back-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: #7a8a6a;
+      text-decoration: none;
+      transition: color 0.18s;
+    }
+
+    .back-link:hover { color: #5c6b47; }
+  </style>
+</head>
+<body>
+  <div class="login-wrapper">
+    <div class="login-card">
+      <div class="login-logo">F</div>
+      <h1 class="login-title">Área Administrativa</h1>
+      <p class="login-sub">Flávia Corretora de Imóveis · Bauru</p>
+
+      <form id="loginForm" autocomplete="on">
+        <div class="form-group">
+          <label for="username">Usuário</label>
+          <div class="input-wrap">
+            <i class="ti ti-user"></i>
+            <input type="text" id="username" name="username" placeholder="Digite o usuário" autocomplete="username" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <div class="input-wrap">
+            <i class="ti ti-lock"></i>
+            <input type="password" id="password" name="password" placeholder="Digite a senha" autocomplete="current-password" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-login">
+          <i class="ti ti-login"></i> Entrar
+        </button>
+        <div class="error-msg" id="errorMsg">
+          <i class="ti ti-alert-circle"></i> Usuário ou senha incorretos.
+        </div>
+      </form>
+
+      <hr class="divider">
+      <a class="back-link" href="page_flavia.html">
+        <i class="ti ti-arrow-left"></i> Voltar para o site
+      </a>
+    </div>
+  </div>
+
+  <script>
+    if (sessionStorage.getItem('flavia_auth') === 'true') {
+      window.location.href = 'admin.html';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value;
+      const error = document.getElementById('errorMsg');
+
+      if (user === 'flavia' && pass === 'imoveis2025') {
+        sessionStorage.setItem('flavia_auth', 'true');
+        window.location.href = 'admin.html';
+      } else {
+        error.style.display = 'block';
+        document.getElementById('password').value = '';
+        document.getElementById('password').focus();
+      }
+    });
+
+    document.getElementById('username').addEventListener('input', () => {
+      document.getElementById('errorMsg').style.display = 'none';
+    });
+    document.getElementById('password').addEventListener('input', () => {
+      document.getElementById('errorMsg').style.display = 'none';
+    });
+  </script>
+</body>
+</html>

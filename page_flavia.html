@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Flávia Corretora de Imóveis em Bauru-SP. Atendimento personalizado para compra, venda e aluguel de imóveis residenciais e comerciais. CRECI/SP N° 328455-F.">
   <title>Flávia Corretora de Imóveis | Bauru</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,6 +50,7 @@
       padding: 3rem 0 2.5rem;
       position: relative;
       overflow: hidden;
+      border-radius: 16px;
     }
 
     .hero::before {
@@ -77,7 +79,7 @@
 
     .badge {
       display: inline-block;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 500;
       letter-spacing: 2px;
       text-transform: uppercase;
@@ -175,8 +177,8 @@
     }
 
     .stat-label {
-      font-size: 10px;
-      color: rgba(255,255,255,0.45);
+      font-size: 12px;
+      color: rgba(255,255,255,0.65);
       text-transform: uppercase;
       letter-spacing: 1px;
       margin-top: 4px;
@@ -290,7 +292,7 @@
       background: #0a0a0a;
       color: #fff;
       padding: 2.5rem 0;
-      border-radius: 24px;
+      border-radius: 16px;
       overflow: hidden;
     }
 
@@ -447,6 +449,68 @@
       }
     }
 
+    .video-play-btn {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      width: 36px;
+      height: 36px;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: background 0.2s;
+      z-index: 1;
+    }
+    .video-play-btn:hover { background: rgba(0,0,0,0.85); }
+
+    #videoModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    #videoModal.open { display: flex; }
+
+    .video-modal-inner {
+      width: 100%;
+      max-width: 820px;
+      position: relative;
+    }
+
+    .video-modal-close {
+      position: absolute;
+      top: -42px;
+      right: 0;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      border-radius: 8px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .card-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 2.5rem 1rem;
+      color: var(--color-text-secondary);
+      font-size: 0.95rem;
+    }
+
     @media (max-width: 520px) {
       .container {
         padding: 0 1rem;
@@ -505,55 +569,12 @@
       <div class="section-title">Imóveis em destaque</div>
       <div class="gold-line"></div>
       <div class="section-sub">Residencial e comercial em Bauru e região.</div>
-      <div class="cards">
-        <article class="card">
-          <div class="card-img card-img-res">
-            <i class="ti ti-building-estate card-icon" aria-hidden="true"></i>
-            <span class="card-tag">Residencial</span>
-          </div>
-          <div class="card-body">
-            <div class="card-title">Casa 3 quartos</div>
-            <div class="card-loc"><i class="ti ti-map-pin" aria-hidden="true"></i>Jardim Europa</div>
-            <div class="card-price">R$ 480.000</div>
-          </div>
-        </article>
-        <article class="card">
-          <div class="card-img card-img-com">
-            <i class="ti ti-building-store card-icon" aria-hidden="true"></i>
-            <span class="card-tag">Comercial</span>
-          </div>
-          <div class="card-body">
-            <div class="card-title">Sala comercial</div>
-            <div class="card-loc"><i class="ti ti-map-pin" aria-hidden="true"></i>Centro</div>
-            <div class="card-price">R$ 320.000</div>
-          </div>
-        </article>
-        <article class="card">
-          <div class="card-img card-img-apt">
-            <i class="ti ti-building card-icon" aria-hidden="true"></i>
-            <span class="card-tag">Apartamento</span>
-          </div>
-          <div class="card-body">
-            <div class="card-title">Apto 2 quartos</div>
-            <div class="card-loc"><i class="ti ti-map-pin" aria-hidden="true"></i>Higienópolis</div>
-            <div class="card-price">R$ 290.000</div>
-          </div>
-        </article>
-        <article class="card">
-          <div class="card-img card-img-ter">
-            <i class="ti ti-trees card-icon" aria-hidden="true"></i>
-            <span class="card-tag">Terreno</span>
-          </div>
-          <div class="card-body">
-            <div class="card-title">Terreno 500m²</div>
-            <div class="card-loc"><i class="ti ti-map-pin" aria-hidden="true"></i>Novo Bauru</div>
-            <div class="card-price">R$ 180.000</div>
-          </div>
-        </article>
+      <div class="cards" id="imovelCards">
+        <!-- preenchido pelo JavaScript -->
       </div>
     </section>
 
-    <section class="sobre">
+    <section class="sobre" id="sobre">
       <div class="sobre-inner">
         <div class="sobre-avatar">F</div>
         <div>
@@ -575,31 +596,134 @@
       <div class="gold-line"></div>
       <p style="font-size:13px;color:var(--color-text-secondary);">Atendimento rápido e sem compromisso</p>
       <div class="contact-cards">
-        <a class="contact-card" href="tel:+5514998973200" style="text-decoration:none;">
+        <a class="contact-card" href="tel:+5514997463733" style="text-decoration:none;">
           <i class="ti ti-phone" aria-hidden="true"></i>
           <p>Telefone</p>
-          <strong>(14) 9 9897-3200</strong>
+          <strong>(14) 9 9746-3733</strong>
         </a>
-        <div class="contact-card">
+        <div class="contact-card" role="group" aria-label="Cidade de atendimento">
           <i class="ti ti-map-pin" aria-hidden="true"></i>
           <p>Cidade</p>
           <strong>Bauru - SP</strong>
         </div>
-        <div class="contact-card">
+        <div class="contact-card" role="group" aria-label="Horário de atendimento">
           <i class="ti ti-clock" aria-hidden="true"></i>
           <p>Horário</p>
           <strong>Seg–Sáb 8h–18h</strong>
         </div>
-        <div class="contact-card">
+        <a class="contact-card" href="https://instagram.com/flaviacorretora" target="_blank" rel="noreferrer noopener" style="text-decoration:none;">
           <i class="ti ti-brand-instagram" aria-hidden="true"></i>
           <p>Instagram</p>
           <strong>@flaviacorretora</strong>
-        </div>
+        </a>
       </div>
-      <a class="btn-wpp" href="https://wa.me/5514998973200" target="_blank" rel="noreferrer noopener"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i>Chamar no WhatsApp · (14) 9 9897-3200</a>
+      <a class="btn-wpp" href="https://wa.me/5514997463733" target="_blank" rel="noreferrer noopener"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i>Chamar no WhatsApp · (14) 9 9746-3733</a>
     </section>
 
-    <footer class="footer">Flávia · <span>Corretora de Imóveis</span> · Bauru SP · CRECI/SP N° 328455-F</footer>
   </div>
+
+  <footer class="footer">Flávia · <span>Corretora de Imóveis</span> · Bauru SP · CRECI/SP N° 328455-F · <a href="login.html" style="color:rgba(255,255,255,0.18);font-size:0.7rem;text-decoration:none;">Admin</a></footer>
+
+  <!-- Modal de vídeo -->
+  <div id="videoModal" onclick="if(event.target===this)closeVideo()">
+    <div class="video-modal-inner">
+      <button class="video-modal-close" onclick="closeVideo()">
+        <i class="ti ti-x"></i> Fechar
+      </button>
+      <div id="videoModalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'flavia_imoveis';
+
+    const DEFAULT_PROPERTIES = [
+      { id: 'r1', category: 'Residencial', title: 'Casa 3 quartos', location: 'Jardim Europa', price: 'R$ 480.000', images: [], videoUrl: '', status: 'disponivel' },
+      { id: 'c1', category: 'Comercial', title: 'Sala comercial', location: 'Centro', price: 'R$ 320.000', images: [], videoUrl: '', status: 'disponivel' },
+      { id: 'a1', category: 'Apartamento', title: 'Apto 2 quartos', location: 'Higienópolis', price: 'R$ 290.000', images: [], videoUrl: '', status: 'disponivel' },
+      { id: 't1', category: 'Terreno', title: 'Terreno 500m²', location: 'Novo Bauru', price: 'R$ 180.000', images: [], videoUrl: '', status: 'disponivel' }
+    ];
+
+    const CAT_CONFIG = {
+      'Residencial': { cls: 'card-img-res', icon: 'ti-building-estate' },
+      'Comercial':   { cls: 'card-img-com', icon: 'ti-building-store' },
+      'Apartamento': { cls: 'card-img-apt', icon: 'ti-building' },
+      'Terreno':     { cls: 'card-img-ter', icon: 'ti-trees' }
+    };
+
+    function getEmbedUrl(url) {
+      if (!url) return null;
+      const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/);
+      if (yt) return `https://www.youtube.com/embed/${yt[1]}`;
+      const vm = url.match(/vimeo\.com\/(\d+)/);
+      if (vm) return `https://player.vimeo.com/video/${vm[1]}`;
+      return null;
+    }
+
+    function loadProperties() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const all = raw ? JSON.parse(raw) : DEFAULT_PROPERTIES;
+      const available = all.filter(p => p.status === 'disponivel');
+      const container = document.getElementById('imovelCards');
+
+      if (!available.length) {
+        container.innerHTML = '<p class="card-empty">Nenhum imóvel disponível no momento.</p>';
+        return;
+      }
+
+      container.innerHTML = available.map(p => {
+        const cfg = CAT_CONFIG[p.category] || CAT_CONFIG['Residencial'];
+        const hasImg = p.images && p.images.length > 0;
+        const imgStyle = hasImg ? `style="background-image:url('${p.images[0]}');background-size:cover;background-position:center;"` : '';
+        const iconHtml = hasImg ? '' : `<i class="ti ${cfg.icon} card-icon" aria-hidden="true"></i>`;
+        const embedUrl = getEmbedUrl(p.videoUrl);
+        const isLocalVideo = p.videoUrl && p.videoUrl.startsWith('data:video');
+        const hasVideo = embedUrl || isLocalVideo;
+        const videoBtn = hasVideo
+          ? `<button class="video-play-btn" onclick="openVideo('${p.id}')" aria-label="Ver vídeo do imóvel"><i class="ti ti-player-play"></i></button>`
+          : '';
+
+        return `
+          <article class="card">
+            <div class="card-img ${hasImg ? '' : cfg.cls}" ${imgStyle}>
+              ${iconHtml}
+              <span class="card-tag">${p.category}</span>
+              ${videoBtn}
+            </div>
+            <div class="card-body">
+              <div class="card-title">${p.title}</div>
+              <div class="card-loc"><i class="ti ti-map-pin" aria-hidden="true"></i>${p.location}</div>
+              <div class="card-price">${p.price}</div>
+            </div>
+          </article>`;
+      }).join('');
+    }
+
+    function openVideo(id) {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const all = raw ? JSON.parse(raw) : DEFAULT_PROPERTIES;
+      const p = all.find(pr => pr.id === id);
+      if (!p || !p.videoUrl) return;
+
+      const content = document.getElementById('videoModalContent');
+      const embedUrl = getEmbedUrl(p.videoUrl);
+
+      if (embedUrl) {
+        content.innerHTML = `<iframe src="${embedUrl}" allowfullscreen style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;display:block;"></iframe>`;
+      } else if (p.videoUrl.startsWith('data:video')) {
+        content.innerHTML = `<video controls autoplay style="width:100%;border-radius:12px;display:block;" src="${p.videoUrl}"></video>`;
+      }
+
+      document.getElementById('videoModal').classList.add('open');
+    }
+
+    function closeVideo() {
+      document.getElementById('videoModal').classList.remove('open');
+      document.getElementById('videoModalContent').innerHTML = '';
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeVideo(); });
+    document.addEventListener('DOMContentLoaded', loadProperties);
+  </script>
 </body>
 </html>

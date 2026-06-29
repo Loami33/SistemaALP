@@ -1,7 +1,8 @@
 {
   "rewrites": [
-    { "source": "/",        "destination": "/page_flavia.html" },
-    { "source": "/login",   "destination": "/login.html" },
-    { "source": "/admin",   "destination": "/admin.html" }
+    { "source": "/",      "destination": "/page_flavia.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/users", "destination": "/users.html" }
   ]
 }

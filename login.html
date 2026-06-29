@@ -210,7 +210,17 @@
       const pass = document.getElementById('password').value;
       const error = document.getElementById('errorMsg');
 
-      if (user === 'flavia' && pass === 'imoveis2025') {
+      const storedUsers = localStorage.getItem('sistemaALP_users');
+      const users = storedUsers ? JSON.parse(storedUsers) : [];
+      let valid = false;
+
+      if (users.length > 0) {
+        valid = users.some(u => u.username === user && u.password === pass);
+      } else {
+        valid = (user === 'flavia' && pass === 'imoveis2025');
+      }
+
+      if (valid) {
         sessionStorage.setItem('flavia_auth', 'true');
         window.location.href = '/admin';
       } else {

@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciar Usuários — SistemaALP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/tabler-icons-iconfont@latest/dist/tabler-icons.min.css" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #eef0eb;
+      min-height: 100vh;
+    }
+
+    /* ── TELA DE AUTENTICAÇÃO MESTRE ── */
+    #masterScreen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    .master-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 8px 48px rgba(60,80,40,0.13);
+    }
+
+    .master-logo {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #2c3520, #5c6b47);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+      font-size: 1.4rem;
+      color: #fff;
+    }
+
+    .master-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: #2c3520;
+      text-align: center;
+      margin-bottom: 0.25rem;
+    }
+
+    .master-sub {
+      font-size: 0.82rem;
+      color: #8a9b6a;
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+
+    /* ── FORMULÁRIO COMPARTILHADO ── */
+    .form-group { margin-bottom: 1rem; }
+
+    .form-group label {
+      display: block;
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: #4a5c3a;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .input-wrap { position: relative; }
+    .input-wrap i {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #8a9b7a;
+      font-size: 1rem;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px 12px 10px 35px;
+      border: 1.5px solid #d6dece;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.94rem;
+      color: #2c3520;
+      background: #f6f8f3;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      border-color: #5c6b47;
+      background: #fff;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      background: #5c6b47;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: background 0.2s;
+      margin-top: 0.25rem;
+    }
+    .btn-primary:hover { background: #4a5c3a; }
+
+    .error-msg {
+      display: none;
+      background: #fde8e8;
+      color: #c0392b;
+      border: 1px solid #fca5a5;
+      border-radius: 8px;
+      padding: 9px 13px;
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 0.75rem;
+    }
+
+    /* ── PAINEL PRINCIPAL ── */
+    #mainPanel { display: none; }
+
+    .panel-header {
+      background: #5c6b47;
+      color: #fff;
+      padding: 0 1.5rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    }
+
+    .panel-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-logo {
+      width: 34px;
+      height: 34px;
+      background: rgba(255,255,255,0.18);
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+    }
+
+    .panel-header-left div .title { font-size: 0.93rem; font-weight: 600; }
+    .panel-header-left div .sub   { font-size: 0.7rem; opacity: 0.72; }
+
+    .btn-header {
+      padding: 7px 13px;
+      background: rgba(255,255,255,0.13);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 8px;
+      font-size: 0.81rem;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.18s;
+    }
+    .btn-header:hover { background: rgba(255,255,255,0.22); }
+
+    .panel-main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 1.75rem 1.5rem;
+    }
+
+    /* ── CARD ADICIONAR ── */
+    .add-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border: 1.5px solid #eaece6;
+      margin-bottom: 1.5rem;
+    }
+
+    .add-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: #2c3520;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .btn-add-user {
+      padding: 10px 18px;
+      background: #5c6b47;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: background 0.2s;
+      height: 42px;
+    }
+    .btn-add-user:hover { background: #4a5c3a; }
+
+    /* ── LISTA DE USUÁRIOS ── */
+    .users-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      border: 1.5px solid #eaece6;
+      overflow: hidden;
+    }
+
+    .users-card-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #eef0eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .users-card-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: #2c3520;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .count-badge {
+      background: #eef0eb;
+      color: #5c6b47;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    .user-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 0.9rem 1.5rem;
+      border-bottom: 1px solid #f5f6f3;
+      transition: background 0.15s;
+    }
+    .user-row:last-child { border-bottom: none; }
+    .user-row:hover { background: #fafbf8; }
+
+    .user-row-label {
+      font-size: 0.7rem;
+      color: #8a9b8a;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 2px;
+    }
+
+    .user-row-value {
+      font-size: 0.92rem;
+      color: #2c3520;
+      font-weight: 500;
+    }
+
+    .user-row-pass {
+      font-size: 0.92rem;
+      color: #8a9b8a;
+      font-family: monospace;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-delete {
+      padding: 7px 12px;
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.18s;
+    }
+    .btn-delete:hover { background: #fecaca; }
+
+    .empty-users {
+      padding: 3rem 1.5rem;
+      text-align: center;
+      color: #8a9b8a;
+    }
+    .empty-users i { font-size: 2.5rem; display: block; margin-bottom: 0.6rem; }
+
+    /* ── INFO BOX ── */
+    .info-box {
+      background: #f0f5eb;
+      border: 1px solid #c8d8b4;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      font-size: 0.85rem;
+      color: #4a5c3a;
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      line-height: 1.55;
+    }
+    .info-box i { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      padding: 11px 18px;
+      border-radius: 10px;
+      font-size: 0.87rem;
+      font-weight: 500;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: transform 0.28s ease, opacity 0.28s ease;
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { background: #5c6b47; color: #fff; }
+    .toast.error   { background: #dc2626; color: #fff; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 680px) {
+      .form-grid { grid-template-columns: 1fr 1fr; }
+      .btn-add-user { grid-column: 1 / -1; }
+      .user-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .user-row > div:last-child { grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── TELA DE AUTENTICAÇÃO MESTRE ── -->
+  <div id="masterScreen">
+    <div class="master-card">
+      <div class="master-logo"><i class="ti ti-shield-lock"></i></div>
+      <h1 class="master-title">Acesso Master</h1>
+      <p class="master-sub">Somente para o administrador do SistemaALP</p>
+
+      <form id="masterForm">
+        <div class="form-group">
+          <label for="masterPass">Senha mestra</label>
+          <div class="input-wrap">
+            <i class="ti ti-key"></i>
+            <input type="password" id="masterPass" placeholder="Digite a senha mestra" required>
+          </div>
+        </div>
+        <button type="submit" class="btn-primary">
+          <i class="ti ti-login"></i> Entrar
+        </button>
+        <div class="error-msg" id="masterError">
+          <i class="ti ti-alert-circle"></i> Senha incorreta.
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── PAINEL PRINCIPAL ── -->
+  <div id="mainPanel">
+    <header class="panel-header">
+      <div class="panel-header-left">
+        <div class="panel-logo"><i class="ti ti-users"></i></div>
+        <div>
+          <div class="title">Gerenciar Usuários</div>
+          <div class="sub">SistemaALP — Painel Master</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <a href="/" class="btn-header"><i class="ti ti-external-link"></i> Ver Site</a>
+        <button onclick="sairMaster()" class="btn-header"><i class="ti ti-logout"></i> Sair</button>
+      </div>
+    </header>
+
+    <main class="panel-main">
+
+      <div class="info-box">
+        <i class="ti ti-info-circle"></i>
+        <span>Crie aqui o usuário e senha para cada cliente. Depois acesse o site do cliente, vá em <strong>/users</strong>, entre com a senha mestra e crie as credenciais. Então repasse o login e senha para o cliente acessar o painel dele.</span>
+      </div>
+
+      <!-- Formulário de adição -->
+      <div class="add-card">
+        <h2><i class="ti ti-user-plus"></i> Novo usuário</h2>
+        <div class="form-grid">
+          <div class="form-group" style="margin-bottom:0">
+            <label>Nome do cliente</label>
+            <div class="input-wrap">
+              <i class="ti ti-id-badge"></i>
+              <input type="text" id="newName" placeholder="Ex: Flávia Corretora">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label>Usuário</label>
+            <div class="input-wrap">
+              <i class="ti ti-user"></i>
+              <input type="text" id="newUsername" placeholder="Ex: flavia" autocomplete="off">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label>Senha</label>
+            <div class="input-wrap">
+              <i class="ti ti-lock"></i>
+              <input type="text" id="newPassword" placeholder="Ex: senha123" autocomplete="off">
+            </div>
+          </div>
+          <button class="btn-add-user" onclick="addUser()">
+            <i class="ti ti-plus"></i> Criar
+          </button>
+        </div>
+      </div>
+
+      <!-- Lista de usuários -->
+      <div class="users-card">
+        <div class="users-card-header">
+          <h2><i class="ti ti-users"></i> Usuários cadastrados</h2>
+          <span class="count-badge" id="userCount">0</span>
+        </div>
+        <div id="usersList"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const USERS_KEY   = 'sistemaALP_users';
+    const MASTER_PASS = 'master@SistemaALP2025';
+
+    // ── AUTH MESTRE ──
+    document.getElementById('masterForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const pass = document.getElementById('masterPass').value;
+      if (pass === MASTER_PASS) {
+        sessionStorage.setItem('master_auth', 'true');
+        showPanel();
+      } else {
+        document.getElementById('masterError').style.display = 'block';
+        document.getElementById('masterPass').value = '';
+        document.getElementById('masterPass').focus();
+      }
+    });
+
+    document.getElementById('masterPass').addEventListener('input', () => {
+      document.getElementById('masterError').style.display = 'none';
+    });
+
+    function showPanel() {
+      document.getElementById('masterScreen').style.display = 'none';
+      document.getElementById('mainPanel').style.display = 'block';
+      renderUsers();
+    }
+
+    function sairMaster() {
+      sessionStorage.removeItem('master_auth');
+      document.getElementById('masterScreen').style.display = 'flex';
+      document.getElementById('mainPanel').style.display = 'none';
+      document.getElementById('masterPass').value = '';
+    }
+
+    // ── STORAGE ──
+    function getUsers() {
+      const raw = localStorage.getItem(USERS_KEY);
+      return raw ? JSON.parse(raw) : [];
+    }
+
+    function saveUsers(users) {
+      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+
+    function genId() {
+      return Date.now().toString(36) + Math.random().toString(36).slice(2);
+    }
+
+    // ── CRUD ──
+    function addUser() {
+      const name     = document.getElementById('newName').value.trim();
+      const username = document.getElementById('newUsername').value.trim().toLowerCase();
+      const password = document.getElementById('newPassword').value.trim();
+
+      if (!name || !username || !password) {
+        showToast('Preencha nome, usuário e senha.', 'error');
+        return;
+      }
+
+      const users = getUsers();
+
+      if (users.find(u => u.username === username)) {
+        showToast('Esse usuário já existe.', 'error');
+        return;
+      }
+
+      users.push({
+        id: genId(),
+        name,
+        username,
+        password,
+        createdAt: new Date().toLocaleDateString('pt-BR')
+      });
+
+      saveUsers(users);
+      renderUsers();
+      document.getElementById('newName').value = '';
+      document.getElementById('newUsername').value = '';
+      document.getElementById('newPassword').value = '';
+      showToast(`Usuário "${username}" criado com sucesso!`, 'success');
+    }
+
+    function deleteUser(id) {
+      const users = getUsers().filter(u => u.id !== id);
+      saveUsers(users);
+      renderUsers();
+      showToast('Usuário removido.', 'success');
+    }
+
+    function togglePassword(id) {
+      const el = document.getElementById('pass_' + id);
+      const btn = document.getElementById('eye_' + id);
+      if (el.dataset.shown === 'true') {
+        el.textContent = '••••••••';
+        el.dataset.shown = 'false';
+        btn.className = 'ti ti-eye';
+      } else {
+        el.textContent = el.dataset.pass;
+        el.dataset.shown = 'true';
+        btn.className = 'ti ti-eye-off';
+      }
+    }
+
+    // ── RENDER ──
+    function renderUsers() {
+      const users = getUsers();
+      const list = document.getElementById('usersList');
+      document.getElementById('userCount').textContent = users.length;
+
+      if (!users.length) {
+        list.innerHTML = `
+          <div class="empty-users">
+            <i class="ti ti-users-group"></i>
+            <p>Nenhum usuário cadastrado ainda.</p>
+          </div>`;
+        return;
+      }
+
+      list.innerHTML = users.map(u => `
+        <div class="user-row">
+          <div>
+            <div class="user-row-label">Cliente</div>
+            <div class="user-row-value">${u.name}</div>
+          </div>
+          <div>
+            <div class="user-row-label">Usuário</div>
+            <div class="user-row-value">${u.username}</div>
+          </div>
+          <div>
+            <div class="user-row-label">Senha</div>
+            <div class="user-row-pass" onclick="togglePassword('${u.id}')">
+              <span id="pass_${u.id}" data-pass="${u.password}" data-shown="false">••••••••</span>
+              <i class="ti ti-eye" id="eye_${u.id}"></i>
+            </div>
+          </div>
+          <button class="btn-delete" onclick="deleteUser('${u.id}')">
+            <i class="ti ti-trash"></i> Remover
+          </button>
+        </div>`).join('');
+    }
+
+    // ── TOAST ──
+    let toastTimer;
+    function showToast(msg, type = 'success') {
+      const t = document.getElementById('toast');
+      t.innerHTML = `<i class="ti ti-${type === 'success' ? 'check' : 'alert-circle'}"></i> ${msg}`;
+      t.className = `toast ${type} show`;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // ── INIT ──
+    if (sessionStorage.getItem('master_auth') === 'true') {
+      showPanel();
+    }
+  </script>
+</body>
+</html>

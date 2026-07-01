@@ -773,6 +773,69 @@
 
     .comment-actions { display: flex; gap: 8px; }
 
+    /* ── SOBRE PANEL ── */
+    .sobre-panel {
+      background: var(--white);
+      border-radius: 14px;
+      border: 1.5px solid #eaece6;
+      padding: 1.5rem;
+      max-width: 620px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .sobre-chips-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      min-height: 36px;
+    }
+
+    .sobre-chip-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--olive-surface);
+      border: 1.5px solid var(--olive-pale);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 0.83rem;
+      color: var(--text-dark);
+    }
+
+    .sobre-chip-del {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      padding: 0;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+    .sobre-chip-del:hover { color: #dc2626; }
+
+    .sobre-chip-add {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .sobre-chip-add input {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1.5px solid var(--olive-pale);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.94rem;
+      color: var(--text-dark);
+      background: var(--olive-surface);
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .sobre-chip-add input:focus { border-color: var(--olive); background: var(--white); }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       .stats-row { grid-template-columns: repeat(3, 1fr); }
@@ -823,6 +886,9 @@
       </button>
       <button class="snav" onclick="switchSection('comentarios', this)">
         <i class="ti ti-message-circle"></i> Comentários
+      </button>
+      <button class="snav" onclick="switchSection('sobre', this)">
+        <i class="ti ti-user"></i> Sobre
       </button>
     </div>
 
@@ -890,6 +956,33 @@
       </div>
 
       <div class="comment-list" id="commentList"></div>
+
+    </div>
+
+    <!-- Sobre -->
+    <div id="sec-sobre" style="display:none">
+
+      <div class="sobre-panel">
+        <div class="form-group">
+          <label for="sNome">Nome</label>
+          <input type="text" id="sNome" placeholder="Ex: Flávia">
+        </div>
+        <div class="form-group">
+          <label for="sTexto">Texto / Biografia</label>
+          <textarea id="sTexto" rows="5" placeholder="Escreva uma apresentação..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Diferenciais</label>
+          <div id="sobreChipsList" class="sobre-chips-list"></div>
+          <div class="sobre-chip-add">
+            <input type="text" id="sChipInput" placeholder="Ex: Financiamento" onkeydown="if(event.key==='Enter')addSobreChip()">
+            <button class="btn-add" onclick="addSobreChip()"><i class="ti ti-plus"></i> Adicionar</button>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:0.5rem">
+          <button class="btn-save" onclick="saveSobre()"><i class="ti ti-check"></i> Salvar</button>
+        </div>
+      </div>
 
     </div>
 
@@ -1376,6 +1469,58 @@
       btn.classList.add('active');
       document.getElementById('sec-imoveis').style.display = sec === 'imoveis' ? '' : 'none';
       document.getElementById('sec-comentarios').style.display = sec === 'comentarios' ? '' : 'none';
+      document.getElementById('sec-sobre').style.display = sec === 'sobre' ? '' : 'none';
+    }
+
+    // ── SOBRE ──
+    const SOBRE_KEY = 'flavia_sobre';
+    const SOBRE_DEFAULT = {
+      nome: 'Flávia',
+      texto: 'Corretora de imóveis apaixonada por conectar pessoas ao lugar certo. Com anos de experiência no mercado de Bauru, ofereço um atendimento diferenciado, honesto e sem pressão.',
+      chips: ['CRECI/SP N° 328455-F', 'Financiamento', 'Avaliação gratuita', 'Imóvel na planta']
+    };
+    let sobreChips = [];
+
+    function loadSobre() {
+      const raw = localStorage.getItem(SOBRE_KEY);
+      const data = raw ? JSON.parse(raw) : SOBRE_DEFAULT;
+      sobreChips = [...(data.chips || SOBRE_DEFAULT.chips)];
+      document.getElementById('sNome').value = data.nome || SOBRE_DEFAULT.nome;
+      document.getElementById('sTexto').value = data.texto || SOBRE_DEFAULT.texto;
+      renderSobreChips();
+    }
+
+    function renderSobreChips() {
+      document.getElementById('sobreChipsList').innerHTML = sobreChips.map((chip, i) => `
+        <span class="sobre-chip-item">
+          ${chip}
+          <button class="sobre-chip-del" onclick="removeSobreChip(${i})"><i class="ti ti-x"></i></button>
+        </span>`).join('');
+    }
+
+    function addSobreChip() {
+      const input = document.getElementById('sChipInput');
+      const val = input.value.trim();
+      if (!val) return;
+      sobreChips.push(val);
+      renderSobreChips();
+      input.value = '';
+    }
+
+    function removeSobreChip(idx) {
+      sobreChips.splice(idx, 1);
+      renderSobreChips();
+    }
+
+    function saveSobre() {
+      const nome = document.getElementById('sNome').value.trim();
+      const texto = document.getElementById('sTexto').value.trim();
+      if (!nome || !texto) {
+        showToast('Preencha nome e texto.', 'error');
+        return;
+      }
+      localStorage.setItem(SOBRE_KEY, JSON.stringify({ nome, texto, chips: [...sobreChips] }));
+      showToast('Seção "Sobre" salva com sucesso!', 'success');
     }
 
     // ── COMMENTS STORAGE ──
@@ -1479,6 +1624,7 @@
       renderAll();
       loadComments();
       renderComments();
+      loadSobre();
     });
   </script>
 </body>

@@ -635,12 +635,12 @@
 
     <section class="sobre" id="sobre">
       <div class="sobre-inner">
-        <div class="sobre-avatar">F</div>
+        <div class="sobre-avatar" id="sobreAvatar">F</div>
         <div>
-          <h2>Flávia</h2>
+          <h2 id="sobreNome">Flávia</h2>
           <div class="gold-line"></div>
-          <p>Corretora de imóveis apaixonada por conectar pessoas ao lugar certo. Com anos de experiência no mercado de Bauru, ofereço um atendimento diferenciado, honesto e sem pressão.</p>
-          <div class="chips">
+          <p id="sobreTexto">Corretora de imóveis apaixonada por conectar pessoas ao lugar certo. Com anos de experiência no mercado de Bauru, ofereço um atendimento diferenciado, honesto e sem pressão.</p>
+          <div class="chips" id="sobreChips">
             <span class="chip">CRECI/SP N° 328455-F</span>
             <span class="chip">Financiamento</span>
             <span class="chip">Avaliação gratuita</span>
@@ -801,7 +801,21 @@
     }
 
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeVideo(); });
-    document.addEventListener('DOMContentLoaded', () => { loadProperties(); loadDepoimentos(); });
+    function loadSobre() {
+      const raw = localStorage.getItem('flavia_sobre');
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (data.nome) {
+        document.getElementById('sobreNome').textContent = data.nome;
+        document.getElementById('sobreAvatar').textContent = data.nome.charAt(0).toUpperCase();
+      }
+      if (data.texto) document.getElementById('sobreTexto').textContent = data.texto;
+      if (data.chips && data.chips.length) {
+        document.getElementById('sobreChips').innerHTML = data.chips.map(c => `<span class="chip">${c}</span>`).join('');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { loadProperties(); loadDepoimentos(); loadSobre(); });
   </script>
 </body>
 </html>

@@ -697,6 +697,82 @@
     .toast.success { background: var(--olive); color: #fff; }
     .toast.error { background: #dc2626; color: #fff; }
 
+    /* ── SECTION NAV ── */
+    .section-nav {
+      display: flex;
+      gap: 0;
+      margin-bottom: 1.25rem;
+      border-bottom: 2px solid var(--olive-pale);
+    }
+
+    .snav {
+      padding: 10px 22px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-mid);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.18s;
+    }
+    .snav.active {
+      color: var(--olive);
+      border-bottom-color: var(--olive);
+      font-weight: 600;
+    }
+    .snav:hover:not(.active) { color: var(--text-dark); }
+
+    /* ── COMMENT CARDS ── */
+    .comment-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .comment-card {
+      background: var(--white);
+      border-radius: 14px;
+      border: 1.5px solid #eaece6;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      padding: 1.1rem 1.2rem 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .comment-text {
+      font-size: 0.92rem;
+      color: var(--text-dark);
+      line-height: 1.6;
+      font-style: italic;
+      flex: 1;
+    }
+
+    .comment-author {
+      border-top: 1px solid var(--olive-bg);
+      padding-top: 10px;
+    }
+
+    .comment-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .comment-role {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+
+    .comment-actions { display: flex; gap: 8px; }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       .stats-row { grid-template-columns: repeat(3, 1fr); }
@@ -706,6 +782,7 @@
       .form-row { grid-template-columns: 1fr; }
       .logo-text .logo-sub { display: none; }
       .property-grid { grid-template-columns: 1fr; }
+      .comment-list { grid-template-columns: 1fr; }
     }
     @media (max-width: 420px) {
       .admin-main { padding: 1rem; }
@@ -739,46 +816,82 @@
   <!-- MAIN -->
   <main class="admin-main">
 
-    <!-- Stats -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-val" id="statTotal">0</div>
-        <div class="stat-lbl">Total</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val" id="statRes">0</div>
-        <div class="stat-lbl">Residencial</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val" id="statCom">0</div>
-        <div class="stat-lbl">Comercial</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val" id="statApt">0</div>
-        <div class="stat-lbl">Apartamento</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-val" id="statTer">0</div>
-        <div class="stat-lbl">Terreno</div>
-      </div>
-    </div>
-
-    <!-- Toolbar -->
-    <div class="toolbar">
-      <div class="filter-tabs">
-        <button class="tab active" data-filter="Todos" onclick="filterBy(this)">Todos</button>
-        <button class="tab" data-filter="Residencial" onclick="filterBy(this)">Residencial</button>
-        <button class="tab" data-filter="Comercial" onclick="filterBy(this)">Comercial</button>
-        <button class="tab" data-filter="Apartamento" onclick="filterBy(this)">Apartamento</button>
-        <button class="tab" data-filter="Terreno" onclick="filterBy(this)">Terreno</button>
-      </div>
-      <button class="btn-add" onclick="openModal()">
-        <i class="ti ti-plus"></i> Novo Imóvel
+    <!-- Section Nav -->
+    <div class="section-nav">
+      <button class="snav active" onclick="switchSection('imoveis', this)">
+        <i class="ti ti-building"></i> Imóveis
+      </button>
+      <button class="snav" onclick="switchSection('comentarios', this)">
+        <i class="ti ti-message-circle"></i> Comentários
       </button>
     </div>
 
-    <!-- Grid -->
-    <div class="property-grid" id="propertyGrid"></div>
+    <!-- Imóveis -->
+    <div id="sec-imoveis">
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-val" id="statTotal">0</div>
+          <div class="stat-lbl">Total</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="statRes">0</div>
+          <div class="stat-lbl">Residencial</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="statCom">0</div>
+          <div class="stat-lbl">Comercial</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="statApt">0</div>
+          <div class="stat-lbl">Apartamento</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="statTer">0</div>
+          <div class="stat-lbl">Terreno</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="filter-tabs">
+          <button class="tab active" data-filter="Todos" onclick="filterBy(this)">Todos</button>
+          <button class="tab" data-filter="Residencial" onclick="filterBy(this)">Residencial</button>
+          <button class="tab" data-filter="Comercial" onclick="filterBy(this)">Comercial</button>
+          <button class="tab" data-filter="Apartamento" onclick="filterBy(this)">Apartamento</button>
+          <button class="tab" data-filter="Terreno" onclick="filterBy(this)">Terreno</button>
+        </div>
+        <button class="btn-add" onclick="openModal()">
+          <i class="ti ti-plus"></i> Novo Imóvel
+        </button>
+      </div>
+
+      <!-- Grid -->
+      <div class="property-grid" id="propertyGrid"></div>
+
+    </div>
+
+    <!-- Comentários -->
+    <div id="sec-comentarios" style="display:none">
+
+      <div class="stats-row" style="grid-template-columns:repeat(1,1fr);max-width:180px;margin-bottom:1.25rem">
+        <div class="stat-card">
+          <div class="stat-val" id="statTotalComments">0</div>
+          <div class="stat-lbl">Comentários</div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div></div>
+        <button class="btn-add" onclick="openCommentModal()">
+          <i class="ti ti-plus"></i> Novo Comentário
+        </button>
+      </div>
+
+      <div class="comment-list" id="commentList"></div>
+
+    </div>
 
   </main>
 
@@ -877,11 +990,41 @@
     </div>
   </div>
 
+  <!-- MODAL COMENTÁRIO -->
+  <div class="modal-overlay" id="commentModalOverlay" onclick="commentOverlayClick(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="commentModalTitle">Novo Comentário</h2>
+        <button class="modal-close" onclick="closeCommentModal()"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="cName">Nome</label>
+          <input type="text" id="cName" placeholder="Ex: João Silva">
+        </div>
+        <div class="form-group">
+          <label for="cRole">Contexto <span style="font-weight:400;text-transform:none;font-size:0.78rem;color:var(--text-light)">(opcional)</span></label>
+          <input type="text" id="cRole" placeholder="Ex: Comprou apartamento em 2024">
+        </div>
+        <div class="form-group">
+          <label for="cText">Depoimento</label>
+          <textarea id="cText" rows="4" placeholder="Escreva o depoimento aqui..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeCommentModal()">Cancelar</button>
+        <button class="btn-save" onclick="saveComment()">
+          <i class="ti ti-check"></i> Salvar
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- CONFIRM DELETE -->
   <div class="confirm-overlay" id="confirmOverlay">
     <div class="confirm-box">
       <div class="confirm-icon"><i class="ti ti-trash"></i></div>
-      <h3>Remover imóvel?</h3>
+      <h3 id="confirmTitle">Confirmar remoção?</h3>
       <p>Tem certeza que deseja remover <strong id="confirmName"></strong>? Esta ação não pode ser desfeita.</p>
       <div class="confirm-actions">
         <button class="btn-cancel" onclick="cancelDelete()">Cancelar</button>
@@ -1188,21 +1331,33 @@
     function confirmDelete(id) {
       deletingId = id;
       const p = properties.find(pr => pr.id === id);
+      document.getElementById('confirmTitle').textContent = 'Remover imóvel?';
       document.getElementById('confirmName').textContent = p ? `"${p.title}"` : 'este imóvel';
+      document.getElementById('confirmOverlay').dataset.mode = 'property';
       document.getElementById('confirmOverlay').classList.add('open');
     }
 
     function cancelDelete() {
       document.getElementById('confirmOverlay').classList.remove('open');
       deletingId = null;
+      deletingCommentId = null;
+      delete document.getElementById('confirmOverlay').dataset.mode;
     }
 
     function doDelete() {
-      properties = properties.filter(p => p.id !== deletingId);
-      persist();
-      renderAll();
-      cancelDelete();
-      showToast('Imóvel removido.', 'success');
+      if (document.getElementById('confirmOverlay').dataset.mode === 'comment') {
+        comments = comments.filter(c => c.id !== deletingCommentId);
+        persistComments();
+        renderComments();
+        cancelDelete();
+        showToast('Comentário removido.', 'success');
+      } else {
+        properties = properties.filter(p => p.id !== deletingId);
+        persist();
+        renderAll();
+        cancelDelete();
+        showToast('Imóvel removido.', 'success');
+      }
     }
 
     // ── TOAST ──
@@ -1215,10 +1370,115 @@
       toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
     }
 
+    // ── SECTION NAV ──
+    function switchSection(sec, btn) {
+      document.querySelectorAll('.snav').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('sec-imoveis').style.display = sec === 'imoveis' ? '' : 'none';
+      document.getElementById('sec-comentarios').style.display = sec === 'comentarios' ? '' : 'none';
+    }
+
+    // ── COMMENTS STORAGE ──
+    const COMMENTS_KEY = 'flavia_comentarios';
+    let comments = [];
+    let editingCommentId = null;
+    let deletingCommentId = null;
+
+    function loadComments() {
+      const raw = localStorage.getItem(COMMENTS_KEY);
+      comments = raw ? JSON.parse(raw) : [];
+    }
+
+    function persistComments() {
+      localStorage.setItem(COMMENTS_KEY, JSON.stringify(comments));
+    }
+
+    // ── COMMENTS RENDER ──
+    function renderComments() {
+      document.getElementById('statTotalComments').textContent = comments.length;
+      const list = document.getElementById('commentList');
+      if (!comments.length) {
+        list.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-message-off"></i><p>Nenhum comentário cadastrado.</p></div>`;
+        return;
+      }
+      list.innerHTML = comments.map(c => `
+        <div class="comment-card">
+          <p class="comment-text">"${c.text}"</p>
+          <div class="comment-author">
+            <div class="comment-name">${c.name}</div>
+            ${c.role ? `<div class="comment-role">${c.role}</div>` : ''}
+          </div>
+          <div class="comment-actions">
+            <button class="btn-edit" onclick="openCommentModal('${c.id}')"><i class="ti ti-edit"></i> Editar</button>
+            <button class="btn-delete" onclick="confirmDeleteComment('${c.id}')"><i class="ti ti-trash"></i></button>
+          </div>
+        </div>`).join('');
+    }
+
+    // ── COMMENT MODAL ──
+    function openCommentModal(id = null) {
+      editingCommentId = id;
+      document.getElementById('cName').value = '';
+      document.getElementById('cRole').value = '';
+      document.getElementById('cText').value = '';
+      if (id) {
+        const c = comments.find(cm => cm.id === id);
+        if (!c) return;
+        document.getElementById('commentModalTitle').textContent = 'Editar Comentário';
+        document.getElementById('cName').value = c.name;
+        document.getElementById('cRole').value = c.role || '';
+        document.getElementById('cText').value = c.text;
+      } else {
+        document.getElementById('commentModalTitle').textContent = 'Novo Comentário';
+      }
+      document.getElementById('commentModalOverlay').classList.add('open');
+    }
+
+    function closeCommentModal() {
+      document.getElementById('commentModalOverlay').classList.remove('open');
+      editingCommentId = null;
+    }
+
+    function commentOverlayClick(e) {
+      if (e.target === document.getElementById('commentModalOverlay')) closeCommentModal();
+    }
+
+    function saveComment() {
+      const name = document.getElementById('cName').value.trim();
+      const text = document.getElementById('cText').value.trim();
+      if (!name || !text) {
+        showToast('Preencha nome e depoimento.', 'error');
+        return;
+      }
+      const data = { name, role: document.getElementById('cRole').value.trim(), text };
+      if (editingCommentId) {
+        const idx = comments.findIndex(c => c.id === editingCommentId);
+        if (idx !== -1) comments[idx] = { ...comments[idx], ...data };
+        showToast('Comentário atualizado!', 'success');
+      } else {
+        comments.push({ id: genId(), ...data });
+        showToast('Comentário adicionado!', 'success');
+      }
+      persistComments();
+      renderComments();
+      closeCommentModal();
+    }
+
+    function confirmDeleteComment(id) {
+      deletingCommentId = id;
+      const c = comments.find(cm => cm.id === id);
+      document.getElementById('confirmTitle').textContent = 'Remover comentário?';
+      document.getElementById('confirmName').textContent = c ? `o comentário de "${c.name}"` : 'este comentário';
+      document.getElementById('confirmOverlay').dataset.mode = 'comment';
+      document.getElementById('confirmOverlay').classList.add('open');
+    }
+
     // ── INIT ──
     document.addEventListener('DOMContentLoaded', () => {
       loadFromStorage();
       renderAll();
+      loadComments();
+      renderComments();
     });
   </script>
 </body>

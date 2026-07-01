@@ -537,6 +537,58 @@
         min-height: auto;
       }
     }
+
+    /* ── DEPOIMENTOS ── */
+    .dep-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .dep-card {
+      background: var(--color-background-secondary);
+      border: 1px solid var(--color-border-tertiary);
+      border-radius: 16px;
+      padding: 1.4rem 1.5rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .dep-quote {
+      color: var(--color-accent);
+      font-size: 1.8rem;
+      line-height: 1;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .dep-text {
+      font-size: 0.93rem;
+      color: var(--color-text-secondary);
+      line-height: 1.65;
+      flex: 1;
+    }
+
+    .dep-author {
+      border-top: 1px solid var(--color-border-tertiary);
+      padding-top: 0.85rem;
+    }
+
+    .dep-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+
+    .dep-role {
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+      margin-top: 2px;
+    }
+
+    @media (max-width: 780px) {
+      .dep-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -572,6 +624,13 @@
       <div class="cards" id="imovelCards">
         <!-- preenchido pelo JavaScript -->
       </div>
+    </section>
+
+    <section class="section" id="depoimentos" style="display:none">
+      <div class="section-title">O que dizem nossos clientes</div>
+      <div class="gold-line"></div>
+      <div class="section-sub">Experiências reais de quem confiou no nosso trabalho.</div>
+      <div class="dep-grid" id="depGrid"></div>
     </section>
 
     <section class="sobre" id="sobre">
@@ -722,8 +781,27 @@
       document.getElementById('videoModalContent').innerHTML = '';
     }
 
+    function loadDepoimentos() {
+      const raw = localStorage.getItem('flavia_comentarios');
+      if (!raw) return;
+      const list = JSON.parse(raw);
+      if (!list.length) return;
+      const section = document.getElementById('depoimentos');
+      const grid = document.getElementById('depGrid');
+      grid.innerHTML = list.map(c => `
+        <article class="dep-card">
+          <div class="dep-quote">"</div>
+          <p class="dep-text">${c.text}</p>
+          <div class="dep-author">
+            <div class="dep-name">${c.name}</div>
+            ${c.role ? `<div class="dep-role">${c.role}</div>` : ''}
+          </div>
+        </article>`).join('');
+      section.style.display = 'block';
+    }
+
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeVideo(); });
-    document.addEventListener('DOMContentLoaded', loadProperties);
+    document.addEventListener('DOMContentLoaded', () => { loadProperties(); loadDepoimentos(); });
   </script>
 </body>
 </html>

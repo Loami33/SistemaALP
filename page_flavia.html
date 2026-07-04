@@ -45,7 +45,7 @@
     }
 
     .hero {
-      background: #0a0a0a;
+      background: var(--color-background-secondary);
       color: #fff;
       padding: 3rem 0 2.5rem;
       position: relative;
@@ -164,7 +164,7 @@
     }
 
     .stat {
-      background: #111;
+      background: var(--color-background-secondary);
       padding: 1.1rem;
       text-align: center;
     }
@@ -289,7 +289,7 @@
     }
 
     .sobre {
-      background: #0a0a0a;
+      background: var(--color-background-secondary);
       color: #fff;
       padding: 2.5rem 0;
       border-radius: 16px;
@@ -417,7 +417,7 @@
     }
 
     .footer {
-      background: #090909;
+      background: var(--color-background-primary);
       color: rgba(255,255,255,0.4);
       text-align: center;
       padding: 1.2rem;
@@ -815,7 +815,17 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => { loadProperties(); loadDepoimentos(); loadSobre(); });
+    function applyCores() {
+      const raw = localStorage.getItem('flavia_cores');
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      const root = document.documentElement;
+      if (data.accent) root.style.setProperty('--color-accent', data.accent);
+      if (data.bg) root.style.setProperty('--color-background-primary', data.bg);
+      if (data.bg2) root.style.setProperty('--color-background-secondary', data.bg2);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { applyCores(); loadProperties(); loadDepoimentos(); loadSobre(); });
   </script>
 </body>
 </html>

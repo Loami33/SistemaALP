@@ -836,6 +836,198 @@
     }
     .sobre-chip-add input:focus { border-color: var(--olive); background: var(--white); }
 
+    /* ── CORES ── */
+    .cores-layout {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+
+    .cores-panel {
+      background: var(--white);
+      border-radius: 14px;
+      border: 1.5px solid #eaece6;
+      padding: 1.5rem;
+      max-width: 380px;
+      flex: 1 1 320px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    .cores-panel-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--text-dark);
+      margin-bottom: 1rem;
+    }
+
+    .color-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .color-input-row input[type=color] {
+      width: 46px;
+      height: 40px;
+      padding: 2px;
+      border: 1.5px solid var(--olive-pale);
+      border-radius: 8px;
+      cursor: pointer;
+      background: var(--white);
+    }
+
+    .color-hex {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1.5px solid var(--olive-pale);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      color: var(--text-dark);
+      text-transform: uppercase;
+      background: var(--olive-surface);
+      outline: none;
+    }
+    .color-hex:focus { border-color: var(--olive); background: var(--white); }
+
+    .cores-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 1.2rem;
+    }
+
+    .btn-preview {
+      padding: 10px 20px;
+      background: var(--olive-surface);
+      color: var(--olive);
+      border: 1.5px solid var(--olive-pale);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-preview:hover { background: var(--olive-pale); }
+
+    .cores-preview-wrap {
+      flex: 1 1 360px;
+      max-width: 420px;
+    }
+
+    .mini-browser {
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      border: 1px solid #eaece6;
+    }
+
+    .mini-browser-bar {
+      background: #e2e4de;
+      padding: 8px 10px;
+      display: flex;
+      gap: 5px;
+    }
+    .mini-browser-bar span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #c7cbc0;
+      display: block;
+    }
+
+    .mini-page {
+      background: var(--color-background-primary, #060606);
+      font-family: 'DM Sans', sans-serif;
+      padding: 1.1rem;
+    }
+
+    .mini-hero {
+      background: var(--color-background-secondary, #101010);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .mini-badge {
+      display: inline-block;
+      font-size: 8px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--color-accent, #c4a064);
+      border: 1px solid var(--color-accent, #c4a064);
+      padding: 3px 8px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    .mini-hero h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      line-height: 1.25;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+    .mini-hero h4 span { color: var(--color-accent, #c4a064); }
+
+    .mini-hero p {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 10px;
+    }
+
+    .mini-btn-gold {
+      display: inline-block;
+      background: var(--color-accent, #c4a064);
+      color: #0a0a0a;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 999px;
+    }
+
+    .mini-card {
+      background: var(--color-background-secondary, #101010);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mini-card-tag {
+      font-size: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: var(--color-accent, #c4a064);
+      color: #0a0a0a;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .mini-card-price {
+      font-family: 'Playfair Display', serif;
+      color: var(--color-accent, #c4a064);
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .mini-footer {
+      text-align: center;
+      font-size: 8px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      padding-top: 4px;
+    }
+    .mini-footer span { color: var(--color-accent, #c4a064); }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       .stats-row { grid-template-columns: repeat(3, 1fr); }
@@ -889,6 +1081,9 @@
       </button>
       <button class="snav" onclick="switchSection('sobre', this)">
         <i class="ti ti-user"></i> Sobre
+      </button>
+      <button class="snav" onclick="switchSection('cores', this)">
+        <i class="ti ti-palette"></i> Cores
       </button>
     </div>
 
@@ -984,6 +1179,56 @@
         </div>
       </div>
 
+    </div>
+
+    <!-- Cores -->
+    <div id="sec-cores" style="display:none">
+      <div class="cores-layout">
+        <div class="cores-panel">
+          <h3 class="cores-panel-title">Cores do site</h3>
+
+          <div class="form-group">
+            <label for="corAccent">Cor de destaque</label>
+            <div class="color-input-row">
+              <input type="color" id="corAccent" oninput="onColorChange()">
+              <input type="text" class="color-hex" id="corAccentHex" oninput="onHexChange('corAccent', this.value)">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="corBg">Cor de fundo</label>
+            <div class="color-input-row">
+              <input type="color" id="corBg" oninput="onColorChange()">
+              <input type="text" class="color-hex" id="corBgHex" oninput="onHexChange('corBg', this.value)">
+            </div>
+          </div>
+
+          <div class="cores-actions">
+            <button class="btn-cancel" onclick="resetColors()"><i class="ti ti-refresh"></i> Restaurar padrão</button>
+            <button class="btn-preview" onclick="togglePreview()"><i class="ti ti-eye"></i> <span id="previewToggleLabel">Visualizar</span></button>
+            <button class="btn-save" onclick="saveColors()"><i class="ti ti-check"></i> Salvar alterações</button>
+          </div>
+        </div>
+
+        <div class="cores-preview-wrap" id="coresPreviewWrap" style="display:none">
+          <div class="mini-browser">
+            <div class="mini-browser-bar"><span></span><span></span><span></span></div>
+            <div class="mini-page">
+              <div class="mini-hero">
+                <span class="mini-badge">Corretora · Bauru</span>
+                <h4>Encontre o imóvel<br>dos seus <span>sonhos</span></h4>
+                <p>Atendimento personalizado para comprar, vender ou alugar.</p>
+                <span class="mini-btn-gold">Falar agora</span>
+              </div>
+              <div class="mini-card">
+                <span class="mini-card-tag">Residencial</span>
+                <span class="mini-card-price">R$ 480.000</span>
+              </div>
+              <div class="mini-footer">Flávia · <span>Corretora de Imóveis</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
   </main>
@@ -1470,6 +1715,81 @@
       document.getElementById('sec-imoveis').style.display = sec === 'imoveis' ? '' : 'none';
       document.getElementById('sec-comentarios').style.display = sec === 'comentarios' ? '' : 'none';
       document.getElementById('sec-sobre').style.display = sec === 'sobre' ? '' : 'none';
+      document.getElementById('sec-cores').style.display = sec === 'cores' ? '' : 'none';
+    }
+
+    // ── CORES ──
+    const COLORS_KEY = 'flavia_cores';
+    const ACCENT_DEFAULT = '#c4a064';
+    const BG_DEFAULT = '#060606';
+
+    function lightenHex(hex, amt) {
+      let c = hex.replace('#', '');
+      if (c.length === 3) c = c.split('').map(ch => ch + ch).join('');
+      const num = parseInt(c, 16);
+      const r = Math.min(255, Math.max(0, (num >> 16) + amt));
+      const g = Math.min(255, Math.max(0, ((num >> 8) & 0xFF) + amt));
+      const b = Math.min(255, Math.max(0, (num & 0xFF) + amt));
+      return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+    }
+
+    function loadColors() {
+      const raw = localStorage.getItem(COLORS_KEY);
+      const data = raw ? JSON.parse(raw) : { accent: ACCENT_DEFAULT, bg: BG_DEFAULT };
+      document.getElementById('corAccent').value = data.accent;
+      document.getElementById('corAccentHex').value = data.accent;
+      document.getElementById('corBg').value = data.bg;
+      document.getElementById('corBgHex').value = data.bg;
+      updateMiniPreview();
+    }
+
+    function onColorChange() {
+      document.getElementById('corAccentHex').value = document.getElementById('corAccent').value;
+      document.getElementById('corBgHex').value = document.getElementById('corBg').value;
+      updateMiniPreview();
+    }
+
+    function onHexChange(id, val) {
+      if (/^#[0-9a-fA-F]{6}$/.test(val)) {
+        document.getElementById(id).value = val;
+        updateMiniPreview();
+      }
+    }
+
+    function updateMiniPreview() {
+      const accent = document.getElementById('corAccent').value;
+      const bg = document.getElementById('corBg').value;
+      const bg2 = lightenHex(bg, 10);
+      const wrap = document.getElementById('coresPreviewWrap');
+      wrap.style.setProperty('--color-accent', accent);
+      wrap.style.setProperty('--color-background-primary', bg);
+      wrap.style.setProperty('--color-background-secondary', bg2);
+    }
+
+    function togglePreview() {
+      const wrap = document.getElementById('coresPreviewWrap');
+      const label = document.getElementById('previewToggleLabel');
+      const show = wrap.style.display === 'none';
+      wrap.style.display = show ? 'block' : 'none';
+      label.textContent = show ? 'Ocultar' : 'Visualizar';
+      if (show) updateMiniPreview();
+    }
+
+    function resetColors() {
+      document.getElementById('corAccent').value = ACCENT_DEFAULT;
+      document.getElementById('corAccentHex').value = ACCENT_DEFAULT;
+      document.getElementById('corBg').value = BG_DEFAULT;
+      document.getElementById('corBgHex').value = BG_DEFAULT;
+      updateMiniPreview();
+      showToast('Cores restauradas para o padrão (não esqueça de salvar).', 'success');
+    }
+
+    function saveColors() {
+      const accent = document.getElementById('corAccent').value;
+      const bg = document.getElementById('corBg').value;
+      const bg2 = lightenHex(bg, 10);
+      localStorage.setItem(COLORS_KEY, JSON.stringify({ accent, bg, bg2 }));
+      showToast('Cores salvas! As mudanças já aparecem no site.', 'success');
     }
 
     // ── SOBRE ──
@@ -1625,6 +1945,7 @@
       loadComments();
       renderComments();
       loadSobre();
+      loadColors();
     });
   </script>
 </body>

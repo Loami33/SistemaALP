@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gerenciar Usuários — SistemaALP</title>
+  <title>Painel do Dono — SistemaALP</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -17,8 +17,8 @@
       min-height: 100vh;
     }
 
-    /* ── TELA DE AUTENTICAÇÃO MESTRE ── */
-    #masterScreen {
+    /* ── TELA DE LOGIN ── */
+    #loginScreen {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -26,7 +26,7 @@
       padding: 1.5rem;
     }
 
-    .master-card {
+    .login-card {
       background: #fff;
       border-radius: 20px;
       padding: 2.5rem 2rem;
@@ -35,7 +35,7 @@
       box-shadow: 0 8px 48px rgba(60,80,40,0.13);
     }
 
-    .master-logo {
+    .login-logo {
       width: 60px;
       height: 60px;
       background: linear-gradient(135deg, #2c3520, #5c6b47);
@@ -48,7 +48,7 @@
       color: #fff;
     }
 
-    .master-title {
+    .login-title {
       font-family: 'Playfair Display', serif;
       font-size: 1.3rem;
       color: #2c3520;
@@ -56,14 +56,13 @@
       margin-bottom: 0.25rem;
     }
 
-    .master-sub {
+    .login-sub {
       font-size: 0.82rem;
       color: #8a9b6a;
       text-align: center;
       margin-bottom: 1.75rem;
     }
 
-    /* ── FORMULÁRIO COMPARTILHADO ── */
     .form-group { margin-bottom: 1rem; }
 
     .form-group label {
@@ -86,7 +85,7 @@
       font-size: 1rem;
     }
 
-    .form-group input, .form-group select {
+    .form-group input {
       width: 100%;
       padding: 10px 12px 10px 35px;
       border: 1.5px solid #d6dece;
@@ -99,10 +98,7 @@
       transition: border-color 0.2s, background 0.2s;
     }
 
-    .form-group input:focus, .form-group select:focus {
-      border-color: #5c6b47;
-      background: #fff;
-    }
+    .form-group input:focus { border-color: #5c6b47; background: #fff; }
 
     .btn-primary {
       width: 100%;
@@ -123,6 +119,7 @@
       margin-top: 0.25rem;
     }
     .btn-primary:hover { background: #4a5c3a; }
+    .btn-primary:disabled { opacity: 0.6; cursor: default; }
 
     .error-msg {
       display: none;
@@ -153,11 +150,7 @@
       box-shadow: 0 2px 12px rgba(0,0,0,0.12);
     }
 
-    .panel-header-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .panel-header-left { display: flex; align-items: center; gap: 10px; }
 
     .panel-logo {
       width: 34px;
@@ -191,7 +184,7 @@
     .btn-header:hover { background: rgba(255,255,255,0.22); }
 
     .panel-main {
-      max-width: 860px;
+      max-width: 900px;
       margin: 0 auto;
       padding: 1.75rem 1.5rem;
     }
@@ -218,9 +211,8 @@
 
     .form-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr auto;
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
-      align-items: end;
     }
 
     .btn-add-user {
@@ -239,10 +231,31 @@
       white-space: nowrap;
       transition: background 0.2s;
       height: 42px;
+      margin-top: 0.5rem;
     }
     .btn-add-user:hover { background: #4a5c3a; }
+    .btn-add-user:disabled { opacity: 0.6; cursor: default; }
 
-    /* ── LISTA DE USUÁRIOS ── */
+    .result-box {
+      display: none;
+      background: #f0f5eb;
+      border: 1px solid #c8d8b4;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      font-size: 0.85rem;
+      color: #2c3520;
+      margin-top: 1rem;
+      line-height: 1.7;
+    }
+    .result-box strong { color: #4a5c3a; }
+    .result-box code {
+      background: #fff;
+      padding: 2px 6px;
+      border-radius: 5px;
+      font-size: 0.82rem;
+    }
+
+    /* ── LISTA DE CLIENTES ── */
     .users-card {
       background: #fff;
       border-radius: 16px;
@@ -277,19 +290,19 @@
       border-radius: 999px;
     }
 
-    .user-row {
+    .client-row {
       display: grid;
-      grid-template-columns: 1fr 1fr 1fr auto;
+      grid-template-columns: 1.2fr 0.8fr 1fr;
       gap: 12px;
       align-items: center;
       padding: 0.9rem 1.5rem;
       border-bottom: 1px solid #f5f6f3;
       transition: background 0.15s;
     }
-    .user-row:last-child { border-bottom: none; }
-    .user-row:hover { background: #fafbf8; }
+    .client-row:last-child { border-bottom: none; }
+    .client-row:hover { background: #fafbf8; }
 
-    .user-row-label {
+    .client-row-label {
       font-size: 0.7rem;
       color: #8a9b8a;
       text-transform: uppercase;
@@ -297,37 +310,19 @@
       margin-bottom: 2px;
     }
 
-    .user-row-value {
+    .client-row-value {
       font-size: 0.92rem;
       color: #2c3520;
       font-weight: 500;
     }
 
-    .user-row-pass {
-      font-size: 0.92rem;
+    .client-id-copy {
+      font-size: 0.82rem;
       color: #8a9b8a;
       font-family: monospace;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      word-break: break-all;
     }
-
-    .btn-delete {
-      padding: 7px 12px;
-      background: #fef2f2;
-      color: #dc2626;
-      border: 1px solid #fecaca;
-      border-radius: 8px;
-      font-size: 0.82rem;
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      transition: all 0.18s;
-    }
-    .btn-delete:hover { background: #fecaca; }
 
     .empty-users {
       padding: 3rem 1.5rem;
@@ -336,7 +331,6 @@
     }
     .empty-users i { font-size: 2.5rem; display: block; margin-bottom: 0.6rem; }
 
-    /* ── INFO BOX ── */
     .info-box {
       background: #f0f5eb;
       border: 1px solid #c8d8b4;
@@ -352,7 +346,6 @@
     }
     .info-box i { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
 
-    /* ── TOAST ── */
     .toast {
       position: fixed;
       bottom: 1.5rem;
@@ -374,37 +367,41 @@
     .toast.success { background: #5c6b47; color: #fff; }
     .toast.error   { background: #dc2626; color: #fff; }
 
-    /* ── RESPONSIVE ── */
     @media (max-width: 680px) {
-      .form-grid { grid-template-columns: 1fr 1fr; }
-      .btn-add-user { grid-column: 1 / -1; }
-      .user-row { grid-template-columns: 1fr 1fr; gap: 8px; }
-      .user-row > div:last-child { grid-column: 1 / -1; }
+      .form-grid { grid-template-columns: 1fr; }
+      .client-row { grid-template-columns: 1fr; gap: 4px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ── TELA DE AUTENTICAÇÃO MESTRE ── -->
-  <div id="masterScreen">
-    <div class="master-card">
-      <div class="master-logo"><i class="ti ti-shield-lock"></i></div>
-      <h1 class="master-title">Acesso Master</h1>
-      <p class="master-sub">Somente para o administrador do SistemaALP</p>
+  <!-- ── TELA DE LOGIN ── -->
+  <div id="loginScreen">
+    <div class="login-card">
+      <div class="login-logo"><i class="ti ti-shield-lock"></i></div>
+      <h1 class="login-title">Painel do Dono</h1>
+      <p class="login-sub">SistemaALP — acesso restrito</p>
 
-      <form id="masterForm">
+      <form id="ownerLoginForm">
         <div class="form-group">
-          <label for="masterPass">Senha mestra</label>
+          <label for="ownerUsername">Usuário</label>
+          <div class="input-wrap">
+            <i class="ti ti-user"></i>
+            <input type="text" id="ownerUsername" placeholder="Seu usuário" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="ownerPassword">Senha</label>
           <div class="input-wrap">
             <i class="ti ti-key"></i>
-            <input type="password" id="masterPass" placeholder="Digite a senha mestra" required>
+            <input type="password" id="ownerPassword" placeholder="Sua senha" required>
           </div>
         </div>
         <button type="submit" class="btn-primary">
           <i class="ti ti-login"></i> Entrar
         </button>
-        <div class="error-msg" id="masterError">
-          <i class="ti ti-alert-circle"></i> Senha incorreta.
+        <div class="error-msg" id="ownerError">
+          <i class="ti ti-alert-circle"></i> Usuário ou senha incorretos.
         </div>
       </form>
     </div>
@@ -414,15 +411,14 @@
   <div id="mainPanel">
     <header class="panel-header">
       <div class="panel-header-left">
-        <div class="panel-logo"><i class="ti ti-users"></i></div>
+        <div class="panel-logo"><i class="ti ti-building-store"></i></div>
         <div>
-          <div class="title">Gerenciar Usuários</div>
-          <div class="sub">SistemaALP — Painel Master</div>
+          <div class="title">Painel do Dono</div>
+          <div class="sub">SistemaALP — gerenciar clientes</div>
         </div>
       </div>
       <div style="display:flex;gap:8px;">
-        <a href="/" class="btn-header"><i class="ti ti-external-link"></i> Ver Site</a>
-        <button onclick="sairMaster()" class="btn-header"><i class="ti ti-logout"></i> Sair</button>
+        <button onclick="sairOwner()" class="btn-header"><i class="ti ti-logout"></i> Sair</button>
       </div>
     </header>
 
@@ -430,47 +426,60 @@
 
       <div class="info-box">
         <i class="ti ti-info-circle"></i>
-        <span>Crie aqui o usuário e senha para cada cliente. Depois acesse o site do cliente, vá em <strong>/users</strong>, entre com a senha mestra e crie as credenciais. Então repasse o login e senha para o cliente acessar o painel dele.</span>
+        <span>Criar um cliente aqui já cria o login dele no Supabase e o registro inicial do site (imóveis, sobre, cores). Depois, copie o <strong>Client ID</strong> gerado e cole no <code>client-config.js</code> do deploy Vercel desse cliente.</span>
       </div>
 
       <!-- Formulário de adição -->
       <div class="add-card">
-        <h2><i class="ti ti-user-plus"></i> Novo usuário</h2>
+        <h2><i class="ti ti-building-plus"></i> Novo cliente</h2>
         <div class="form-grid">
-          <div class="form-group" style="margin-bottom:0">
-            <label>Nome do cliente</label>
-            <div class="input-wrap">
-              <i class="ti ti-id-badge"></i>
-              <input type="text" id="newName" placeholder="Ex: Flávia Corretora">
-            </div>
+          <div class="form-group">
+            <label>Nome do negócio</label>
+            <input type="text" id="newBusinessName" placeholder="Ex: Flávia Corretora de Imóveis">
           </div>
-          <div class="form-group" style="margin-bottom:0">
-            <label>Usuário</label>
-            <div class="input-wrap">
-              <i class="ti ti-user"></i>
-              <input type="text" id="newUsername" placeholder="Ex: flavia" autocomplete="off">
-            </div>
+          <div class="form-group">
+            <label>Nome do responsável</label>
+            <input type="text" id="newOwnerName" placeholder="Ex: Flávia">
           </div>
-          <div class="form-group" style="margin-bottom:0">
-            <label>Senha</label>
-            <div class="input-wrap">
-              <i class="ti ti-lock"></i>
-              <input type="text" id="newPassword" placeholder="Ex: senha123" autocomplete="off">
-            </div>
+          <div class="form-group">
+            <label>Slug (identificador único)</label>
+            <input type="text" id="newSlug" placeholder="Ex: flavia" autocomplete="off">
           </div>
-          <button class="btn-add-user" onclick="addUser()">
-            <i class="ti ti-plus"></i> Criar
-          </button>
+          <div class="form-group">
+            <label>Cidade</label>
+            <input type="text" id="newCity" placeholder="Ex: Bauru - SP">
+          </div>
+          <div class="form-group">
+            <label>Usuário de login do cliente</label>
+            <input type="text" id="newUsername" placeholder="Ex: flavia" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label>Senha do cliente</label>
+            <input type="text" id="newPassword" placeholder="Ex: senha123" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label>Telefone / WhatsApp</label>
+            <input type="text" id="newPhone" placeholder="Ex: (14) 99999-9999">
+          </div>
+          <div class="form-group">
+            <label>Instagram</label>
+            <input type="text" id="newInstagram" placeholder="Ex: @minhaempresa">
+          </div>
         </div>
+        <button class="btn-add-user" id="createClientBtn" onclick="createClient()">
+          <i class="ti ti-plus"></i> Criar cliente
+        </button>
+
+        <div class="result-box" id="resultBox"></div>
       </div>
 
-      <!-- Lista de usuários -->
+      <!-- Lista de clientes -->
       <div class="users-card">
         <div class="users-card-header">
-          <h2><i class="ti ti-users"></i> Usuários cadastrados</h2>
-          <span class="count-badge" id="userCount">0</span>
+          <h2><i class="ti ti-building-store"></i> Clientes cadastrados</h2>
+          <span class="count-badge" id="clientCount">0</span>
         </div>
-        <div id="usersList"></div>
+        <div id="clientsList"></div>
       </div>
 
     </main>
@@ -479,146 +488,137 @@
   <!-- Toast -->
   <div class="toast" id="toast"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/client-config.js"></script>
   <script>
-    const USERS_KEY   = 'sistemaALP_users';
-    const MASTER_PASS = 'master@SistemaALP2025';
+    const sb = window.supabase.createClient(
+      SISTEMA_ALP_CONFIG.supabaseUrl,
+      SISTEMA_ALP_CONFIG.supabaseAnonKey
+    );
 
-    // ── AUTH MESTRE ──
-    document.getElementById('masterForm').addEventListener('submit', function (e) {
+    function ownerEmail(username) {
+      return `${username.trim().toLowerCase()}@owner.login.sistemaalp.internal`;
+    }
+
+    (async () => {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) showPanel();
+    })();
+
+    document.getElementById('ownerLoginForm').addEventListener('submit', async e => {
       e.preventDefault();
-      const pass = document.getElementById('masterPass').value;
-      if (pass === MASTER_PASS) {
-        sessionStorage.setItem('master_auth', 'true');
-        showPanel();
-      } else {
-        document.getElementById('masterError').style.display = 'block';
-        document.getElementById('masterPass').value = '';
-        document.getElementById('masterPass').focus();
-      }
-    });
+      const user = document.getElementById('ownerUsername').value.trim();
+      const pass = document.getElementById('ownerPassword').value;
+      const errorEl = document.getElementById('ownerError');
 
-    document.getElementById('masterPass').addEventListener('input', () => {
-      document.getElementById('masterError').style.display = 'none';
+      const { error } = await sb.auth.signInWithPassword({ email: ownerEmail(user), password: pass });
+      if (error) {
+        errorEl.style.display = 'block';
+        return;
+      }
+      errorEl.style.display = 'none';
+      showPanel();
     });
 
     function showPanel() {
-      document.getElementById('masterScreen').style.display = 'none';
+      document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainPanel').style.display = 'block';
-      renderUsers();
+      loadClients();
     }
 
-    function sairMaster() {
-      sessionStorage.removeItem('master_auth');
-      document.getElementById('masterScreen').style.display = 'flex';
-      document.getElementById('mainPanel').style.display = 'none';
-      document.getElementById('masterPass').value = '';
+    async function sairOwner() {
+      await sb.auth.signOut();
+      window.location.reload();
     }
 
-    // ── STORAGE ──
-    function getUsers() {
-      const raw = localStorage.getItem(USERS_KEY);
-      return raw ? JSON.parse(raw) : [];
-    }
+    async function loadClients() {
+      const { data, error } = await sb.from('clients').select('*').order('created_at', { ascending: false });
+      const list = document.getElementById('clientsList');
+      const clients = data || [];
+      document.getElementById('clientCount').textContent = clients.length;
 
-    function saveUsers(users) {
-      localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    }
-
-    function genId() {
-      return Date.now().toString(36) + Math.random().toString(36).slice(2);
-    }
-
-    // ── CRUD ──
-    function addUser() {
-      const name     = document.getElementById('newName').value.trim();
-      const username = document.getElementById('newUsername').value.trim().toLowerCase();
-      const password = document.getElementById('newPassword').value.trim();
-
-      if (!name || !username || !password) {
-        showToast('Preencha nome, usuário e senha.', 'error');
+      if (error || !clients.length) {
+        list.innerHTML = `<div class="empty-users"><i class="ti ti-building-off"></i><p>Nenhum cliente cadastrado ainda.</p></div>`;
         return;
       }
 
-      const users = getUsers();
-
-      if (users.find(u => u.username === username)) {
-        showToast('Esse usuário já existe.', 'error');
-        return;
-      }
-
-      users.push({
-        id: genId(),
-        name,
-        username,
-        password,
-        createdAt: new Date().toLocaleDateString('pt-BR')
-      });
-
-      saveUsers(users);
-      renderUsers();
-      document.getElementById('newName').value = '';
-      document.getElementById('newUsername').value = '';
-      document.getElementById('newPassword').value = '';
-      showToast(`Usuário "${username}" criado com sucesso!`, 'success');
-    }
-
-    function deleteUser(id) {
-      const users = getUsers().filter(u => u.id !== id);
-      saveUsers(users);
-      renderUsers();
-      showToast('Usuário removido.', 'success');
-    }
-
-    function togglePassword(id) {
-      const el = document.getElementById('pass_' + id);
-      const btn = document.getElementById('eye_' + id);
-      if (el.dataset.shown === 'true') {
-        el.textContent = '••••••••';
-        el.dataset.shown = 'false';
-        btn.className = 'ti ti-eye';
-      } else {
-        el.textContent = el.dataset.pass;
-        el.dataset.shown = 'true';
-        btn.className = 'ti ti-eye-off';
-      }
-    }
-
-    // ── RENDER ──
-    function renderUsers() {
-      const users = getUsers();
-      const list = document.getElementById('usersList');
-      document.getElementById('userCount').textContent = users.length;
-
-      if (!users.length) {
-        list.innerHTML = `
-          <div class="empty-users">
-            <i class="ti ti-users-group"></i>
-            <p>Nenhum usuário cadastrado ainda.</p>
-          </div>`;
-        return;
-      }
-
-      list.innerHTML = users.map(u => `
-        <div class="user-row">
+      list.innerHTML = clients.map(c => `
+        <div class="client-row">
           <div>
-            <div class="user-row-label">Cliente</div>
-            <div class="user-row-value">${u.name}</div>
+            <div class="client-row-label">Negócio</div>
+            <div class="client-row-value">${c.business_name}</div>
           </div>
           <div>
-            <div class="user-row-label">Usuário</div>
-            <div class="user-row-value">${u.username}</div>
+            <div class="client-row-label">Slug</div>
+            <div class="client-row-value">${c.slug}</div>
           </div>
           <div>
-            <div class="user-row-label">Senha</div>
-            <div class="user-row-pass" onclick="togglePassword('${u.id}')">
-              <span id="pass_${u.id}" data-pass="${u.password}" data-shown="false">••••••••</span>
-              <i class="ti ti-eye" id="eye_${u.id}"></i>
-            </div>
+            <div class="client-row-label">Client ID</div>
+            <div class="client-id-copy" onclick="copyText('${c.id}')" title="Clique para copiar">${c.id}</div>
           </div>
-          <button class="btn-delete" onclick="deleteUser('${u.id}')">
-            <i class="ti ti-trash"></i> Remover
-          </button>
         </div>`).join('');
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text);
+      showToast('Copiado!', 'success');
+    }
+
+    async function createClient() {
+      const businessName = document.getElementById('newBusinessName').value.trim();
+      const ownerName = document.getElementById('newOwnerName').value.trim();
+      const slug = document.getElementById('newSlug').value.trim().toLowerCase();
+      const city = document.getElementById('newCity').value.trim();
+      const username = document.getElementById('newUsername').value.trim();
+      const password = document.getElementById('newPassword').value.trim();
+      const contactPhone = document.getElementById('newPhone').value.trim();
+      const contactInstagram = document.getElementById('newInstagram').value.trim();
+
+      if (!businessName || !slug || !username || !password) {
+        showToast('Preencha ao menos negócio, slug, usuário e senha.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('createClientBtn');
+      btn.disabled = true;
+
+      try {
+        const { data: { session } } = await sb.auth.getSession();
+        const res = await fetch('/api/create-client', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.access_token}`
+          },
+          body: JSON.stringify({
+            businessName, ownerName, slug, username, password,
+            contactPhone, contactWhatsapp: contactPhone, contactInstagram, city
+          })
+        });
+        const result = await res.json();
+        if (!res.ok) {
+          showToast(result.error || 'Erro ao criar cliente.', 'error');
+          return;
+        }
+
+        const box = document.getElementById('resultBox');
+        box.style.display = 'block';
+        box.innerHTML = `
+          <strong>Cliente criado!</strong><br>
+          Client ID (cole no <code>client-config.js</code> do deploy dele): <code>${result.client.id}</code><br>
+          Login do cliente: usuário <code>${result.credentials.username}</code> / senha <code>${result.credentials.password}</code>
+        `;
+        showToast('Cliente criado com sucesso!', 'success');
+
+        ['newBusinessName','newOwnerName','newSlug','newCity','newUsername','newPassword','newPhone','newInstagram']
+          .forEach(id => document.getElementById(id).value = '');
+
+        loadClients();
+      } catch (err) {
+        showToast('Erro de rede ao criar cliente.', 'error');
+      } finally {
+        btn.disabled = false;
+      }
     }
 
     // ── TOAST ──
@@ -628,12 +628,7 @@
       t.innerHTML = `<i class="ti ti-${type === 'success' ? 'check' : 'alert-circle'}"></i> ${msg}`;
       t.className = `toast ${type} show`;
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
-    }
-
-    // ── INIT ──
-    if (sessionStorage.getItem('master_auth') === 'true') {
-      showPanel();
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
     }
   </script>
 </body>

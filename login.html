@@ -199,29 +199,38 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/client-config.js"></script>
   <script>
-    if (sessionStorage.getItem('flavia_auth') === 'true') {
-      window.location.href = '/admin';
+    const sb = window.supabase.createClient(
+      SISTEMA_ALP_CONFIG.supabaseUrl,
+      SISTEMA_ALP_CONFIG.supabaseAnonKey
+    );
+
+    function usernameToEmail(username) {
+      return `${username.trim().toLowerCase()}@${SISTEMA_ALP_CONFIG.clientSlug}.login.sistemaalp.internal`;
     }
 
-    document.getElementById('loginForm').addEventListener('submit', function (e) {
+    (async () => {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) window.location.href = '/admin';
+    })();
+
+    document.getElementById('loginForm').addEventListener('submit', async function (e) {
       e.preventDefault();
       const user = document.getElementById('username').value.trim();
       const pass = document.getElementById('password').value;
       const error = document.getElementById('errorMsg');
+      const btn = document.querySelector('.btn-login');
 
-      const storedUsers = localStorage.getItem('sistemaALP_users');
-      const users = storedUsers ? JSON.parse(storedUsers) : [];
-      let valid = false;
+      btn.disabled = true;
+      const { error: authError } = await sb.auth.signInWithPassword({
+        email: usernameToEmail(user),
+        password: pass
+      });
+      btn.disabled = false;
 
-      if (users.length > 0) {
-        valid = users.some(u => u.username === user && u.password === pass);
-      } else {
-        valid = (user === 'flavia' && pass === 'imoveis2025');
-      }
-
-      if (valid) {
-        sessionStorage.setItem('flavia_auth', 'true');
+      if (!authError) {
         window.location.href = '/admin';
       } else {
         error.style.display = 'block';

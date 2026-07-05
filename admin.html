@@ -1376,15 +1376,14 @@
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/client-config.js"></script>
   <script>
-    const STORAGE_KEY = 'flavia_imoveis';
-
-    const DEFAULT_PROPERTIES = [
-      { id: 'r1', category: 'Residencial', title: 'Casa 3 quartos', location: 'Jardim Europa', price: 'R$ 480.000', images: [], videoUrl: '', status: 'disponivel' },
-      { id: 'c1', category: 'Comercial', title: 'Sala comercial', location: 'Centro', price: 'R$ 320.000', images: [], videoUrl: '', status: 'disponivel' },
-      { id: 'a1', category: 'Apartamento', title: 'Apto 2 quartos', location: 'Higienópolis', price: 'R$ 290.000', images: [], videoUrl: '', status: 'disponivel' },
-      { id: 't1', category: 'Terreno', title: 'Terreno 500m²', location: 'Novo Bauru', price: 'R$ 180.000', images: [], videoUrl: '', status: 'disponivel' }
-    ];
+    const sb = window.supabase.createClient(
+      SISTEMA_ALP_CONFIG.supabaseUrl,
+      SISTEMA_ALP_CONFIG.supabaseAnonKey
+    );
+    const CLIENT_ID = SISTEMA_ALP_CONFIG.clientId;
 
     const CAT_CONFIG = {
       'Residencial': { cls: 'res', icon: 'ti-building-estate' },
@@ -1397,39 +1396,60 @@
     let currentFilter = 'Todos';
     let editingId = null;
     let currentImages = [];
+    let deletedImages = [];
+    let currentVideoFile = null;
+    let existingVideoUrl = null;
+    let activeVideoTabName = 'url';
     let deletingId = null;
 
     // ── AUTH ──
-    if (sessionStorage.getItem('flavia_auth') !== 'true') {
+    async function requireAuth() {
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) {
+        window.location.href = '/login';
+        return null;
+      }
+      return session;
+    }
+
+    async function logout() {
+      await sb.auth.signOut();
       window.location.href = '/login';
     }
 
-    function logout() {
-      sessionStorage.removeItem('flavia_auth');
-      window.location.href = '/login';
-    }
-
-    // ── STORAGE ──
-    function loadFromStorage() {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) {
-        properties = JSON.parse(JSON.stringify(DEFAULT_PROPERTIES));
-        persist();
-      } else {
-        properties = JSON.parse(raw);
+    // ── PROPERTIES (Supabase) ──
+    async function loadProperties() {
+      const { data, error } = await sb
+        .from('properties')
+        .select('*, property_images(*)')
+        .eq('client_id', CLIENT_ID)
+        .order('created_at', { ascending: false });
+      if (error) {
+        showToast('Erro ao carregar imóveis.', 'error');
+        return;
       }
+      properties = (data || []).map(p => {
+        const imgs = (p.property_images || []).slice().sort((a, b) => a.position - b.position);
+        return {
+          ...p,
+          property_images: imgs,
+          images: imgs.map(img => sb.storage.from('property-images').getPublicUrl(img.storage_path).data.publicUrl)
+        };
+      });
     }
 
-    function persist() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(properties));
-      } catch (e) {
-        showToast('Armazenamento cheio — reduza o tamanho das fotos.', 'error');
-      }
+    function randomFileName(ext) {
+      const rand = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+      return rand + '.' + ext;
     }
 
-    function genId() {
-      return Date.now().toString(36) + Math.random().toString(36).slice(2);
+    function extFromMime(mime) {
+      if (mime.includes('png')) return 'png';
+      if (mime.includes('webp')) return 'webp';
+      if (mime.includes('mp4')) return 'mp4';
+      if (mime.includes('webm')) return 'webm';
+      if (mime.includes('quicktime')) return 'mov';
+      return 'jpg';
     }
 
     // ── RENDER ──
@@ -1467,7 +1487,7 @@
         const hasImg = p.images && p.images.length > 0;
         const imgHtml = hasImg ? `<img src="${p.images[0]}" alt="${p.title}">` : `<i class="ti ${cfg.icon} prop-thumb-icon"></i>`;
         const primaryBadge = hasImg && p.images.length > 1 ? `<span class="badge-imgs"><i class="ti ti-photo"></i>${p.images.length}</span>` : '';
-        const videoBadge = p.videoUrl ? `<span class="badge-video"><i class="ti ti-player-play"></i></span>` : '';
+        const videoBadge = p.video_url ? `<span class="badge-video"><i class="ti ti-player-play"></i></span>` : '';
 
         return `
           <div class="prop-card">
@@ -1497,6 +1517,9 @@
     function openModal(id = null) {
       editingId = id;
       currentImages = [];
+      deletedImages = [];
+      currentVideoFile = null;
+      existingVideoUrl = null;
       document.getElementById('imagePreview').innerHTML = '';
       document.getElementById('videoPreview').innerHTML = '';
       document.getElementById('fVideoUrl').value = '';
@@ -1516,10 +1539,24 @@
         document.getElementById('fTitle').value = p.title;
         document.getElementById('fLocation').value = p.location;
         document.getElementById('fPrice').value = p.price;
-        document.getElementById('fVideoUrl').value = p.videoUrl || '';
-        currentImages = [...(p.images || [])];
+
+        currentImages = (p.property_images || []).map(img => ({
+          isNew: false,
+          id: img.id,
+          path: img.storage_path,
+          url: sb.storage.from('property-images').getPublicUrl(img.storage_path).data.publicUrl
+        }));
         renderImagePreviews();
-        if (p.videoUrl) previewVideo();
+
+        if (p.video_type === 'upload' && p.video_url) {
+          existingVideoUrl = p.video_url;
+          switchVideoTab('file');
+          document.getElementById('videoPreview').innerHTML = `<div class="video-preview-box"><video controls src="${p.video_url}"></video></div>`;
+        } else if (p.video_url) {
+          document.getElementById('fVideoUrl').value = p.video_url;
+          switchVideoTab('url');
+          previewVideo();
+        }
       } else {
         document.getElementById('modalTitle').textContent = 'Novo Imóvel';
       }
@@ -1529,8 +1566,12 @@
 
     function closeModal() {
       document.getElementById('modalOverlay').classList.remove('open');
+      currentImages.filter(i => i.isNew).forEach(i => URL.revokeObjectURL(i.url));
       editingId = null;
       currentImages = [];
+      deletedImages = [];
+      currentVideoFile = null;
+      existingVideoUrl = null;
     }
 
     function overlayClick(e) {
@@ -1541,8 +1582,8 @@
     async function handleImages(input) {
       const files = Array.from(input.files);
       for (const f of files) {
-        const b64 = await compressImage(f);
-        currentImages.push(b64);
+        const blob = await compressImage(f);
+        currentImages.push({ isNew: true, blob, url: URL.createObjectURL(blob) });
       }
       renderImagePreviews();
       input.value = '';
@@ -1559,7 +1600,7 @@
             canvas.width = Math.round(img.width * ratio);
             canvas.height = Math.round(img.height * ratio);
             canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-            resolve(canvas.toDataURL('image/jpeg', 0.82));
+            canvas.toBlob(blob => resolve(blob), 'image/jpeg', 0.82);
           };
           img.src = e.target.result;
         };
@@ -1568,21 +1609,25 @@
     }
 
     function renderImagePreviews() {
-      document.getElementById('imagePreview').innerHTML = currentImages.map((src, i) => `
+      document.getElementById('imagePreview').innerHTML = currentImages.map((item, i) => `
         <div class="img-thumb">
-          <img src="${src}" alt="Foto ${i + 1}">
+          <img src="${item.url}" alt="Foto ${i + 1}">
           <button class="img-thumb-del" onclick="removeImage(${i})">×</button>
           ${i === 0 ? '<span class="img-thumb-primary">Principal</span>' : ''}
         </div>`).join('');
     }
 
     function removeImage(idx) {
+      const item = currentImages[idx];
+      if (item.isNew) URL.revokeObjectURL(item.url);
+      else deletedImages.push({ id: item.id, path: item.path });
       currentImages.splice(idx, 1);
       renderImagePreviews();
     }
 
     // ── VIDEO ──
     function switchVideoTab(tab, btn) {
+      activeVideoTabName = tab;
       document.querySelectorAll('.vtab').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.video-panel').forEach(p => p.classList.remove('active'));
       if (btn) btn.classList.add('active');
@@ -1619,19 +1664,16 @@
         input.value = '';
         return;
       }
-      const reader = new FileReader();
-      reader.onload = e => {
-        document.getElementById('fVideoUrl').value = e.target.result;
-        document.getElementById('videoPreview').innerHTML = `
-          <div class="video-preview-box">
-            <video controls src="${e.target.result}"></video>
-          </div>`;
-      };
-      reader.readAsDataURL(file);
+      currentVideoFile = file;
+      const localUrl = URL.createObjectURL(file);
+      document.getElementById('videoPreview').innerHTML = `
+        <div class="video-preview-box">
+          <video controls src="${localUrl}"></video>
+        </div>`;
     }
 
     // ── SAVE ──
-    function saveProperty() {
+    async function saveProperty() {
       const title = document.getElementById('fTitle').value.trim();
       const location = document.getElementById('fLocation').value.trim();
       const price = document.getElementById('fPrice').value.trim();
@@ -1641,28 +1683,80 @@
         return;
       }
 
-      const data = {
-        category: document.getElementById('fCategory').value,
-        status:   document.getElementById('fStatus').value,
-        title,
-        location,
-        price,
-        images:   [...currentImages],
-        videoUrl: document.getElementById('fVideoUrl').value.trim()
-      };
+      const saveBtn = document.querySelector('#modalOverlay .btn-save');
+      saveBtn.disabled = true;
 
-      if (editingId) {
-        const idx = properties.findIndex(p => p.id === editingId);
-        if (idx !== -1) properties[idx] = { ...properties[idx], ...data };
-        showToast('Imóvel atualizado com sucesso!', 'success');
-      } else {
-        properties.push({ id: genId(), ...data });
-        showToast('Imóvel adicionado com sucesso!', 'success');
+      try {
+        // ── vídeo ──
+        let videoUrl = null;
+        let videoType = null;
+
+        if (currentVideoFile) {
+          const ext = extFromMime(currentVideoFile.type);
+          const path = `${CLIENT_ID}/videos/${randomFileName(ext)}`;
+          const { error: upErr } = await sb.storage.from('property-videos').upload(path, currentVideoFile);
+          if (upErr) throw upErr;
+          videoUrl = sb.storage.from('property-videos').getPublicUrl(path).data.publicUrl;
+          videoType = 'upload';
+        } else if (activeVideoTabName === 'file' && existingVideoUrl) {
+          videoUrl = existingVideoUrl;
+          videoType = 'upload';
+        } else {
+          const raw = document.getElementById('fVideoUrl').value.trim();
+          if (raw) {
+            videoUrl = raw;
+            if (/youtube\.com|youtu\.be/.test(raw)) videoType = 'youtube';
+            else if (/vimeo\.com/.test(raw)) videoType = 'vimeo';
+          }
+        }
+
+        const data = {
+          client_id: CLIENT_ID,
+          category: document.getElementById('fCategory').value,
+          status: document.getElementById('fStatus').value,
+          title, location, price,
+          video_url: videoUrl,
+          video_type: videoType
+        };
+
+        let propertyId = editingId;
+        if (editingId) {
+          const { error } = await sb.from('properties').update(data).eq('id', editingId);
+          if (error) throw error;
+        } else {
+          const { data: inserted, error } = await sb.from('properties').insert(data).select().single();
+          if (error) throw error;
+          propertyId = inserted.id;
+        }
+
+        // ── remover imagens excluídas ──
+        if (deletedImages.length) {
+          await sb.storage.from('property-images').remove(deletedImages.map(d => d.path));
+          await sb.from('property_images').delete().in('id', deletedImages.map(d => d.id));
+        }
+
+        // ── subir imagens novas + atualizar posições ──
+        for (let i = 0; i < currentImages.length; i++) {
+          const img = currentImages[i];
+          if (img.isNew) {
+            const path = `${CLIENT_ID}/${propertyId}/${randomFileName('jpg')}`;
+            const { error: upErr } = await sb.storage.from('property-images').upload(path, img.blob);
+            if (upErr) throw upErr;
+            await sb.from('property_images').insert({ property_id: propertyId, client_id: CLIENT_ID, storage_path: path, position: i });
+          } else {
+            await sb.from('property_images').update({ position: i }).eq('id', img.id);
+          }
+        }
+
+        showToast(editingId ? 'Imóvel atualizado com sucesso!' : 'Imóvel adicionado com sucesso!', 'success');
+        await loadProperties();
+        renderAll();
+        closeModal();
+      } catch (err) {
+        showToast('Erro ao salvar imóvel: ' + err.message, 'error');
+      } finally {
+        saveBtn.disabled = false;
       }
-
-      persist();
-      renderAll();
-      closeModal();
     }
 
     // ── DELETE ──
@@ -1682,16 +1776,22 @@
       delete document.getElementById('confirmOverlay').dataset.mode;
     }
 
-    function doDelete() {
+    async function doDelete() {
       if (document.getElementById('confirmOverlay').dataset.mode === 'comment') {
-        comments = comments.filter(c => c.id !== deletingCommentId);
-        persistComments();
+        const { error } = await sb.from('testimonials').delete().eq('id', deletingCommentId);
+        if (error) { showToast('Erro ao remover comentário.', 'error'); return; }
+        await loadComments();
         renderComments();
         cancelDelete();
         showToast('Comentário removido.', 'success');
       } else {
-        properties = properties.filter(p => p.id !== deletingId);
-        persist();
+        const prop = properties.find(p => p.id === deletingId);
+        if (prop && prop.property_images && prop.property_images.length) {
+          await sb.storage.from('property-images').remove(prop.property_images.map(i => i.storage_path));
+        }
+        const { error } = await sb.from('properties').delete().eq('id', deletingId);
+        if (error) { showToast('Erro ao remover imóvel.', 'error'); return; }
+        await loadProperties();
         renderAll();
         cancelDelete();
         showToast('Imóvel removido.', 'success');
@@ -1719,7 +1819,6 @@
     }
 
     // ── CORES ──
-    const COLORS_KEY = 'flavia_cores';
     const ACCENT_DEFAULT = '#c4a064';
     const BG_DEFAULT = '#060606';
 
@@ -1733,13 +1832,14 @@
       return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
     }
 
-    function loadColors() {
-      const raw = localStorage.getItem(COLORS_KEY);
-      const data = raw ? JSON.parse(raw) : { accent: ACCENT_DEFAULT, bg: BG_DEFAULT };
-      document.getElementById('corAccent').value = data.accent;
-      document.getElementById('corAccentHex').value = data.accent;
-      document.getElementById('corBg').value = data.bg;
-      document.getElementById('corBgHex').value = data.bg;
+    async function loadColors() {
+      const { data, error } = await sb.from('theme_settings').select('*').eq('client_id', CLIENT_ID).maybeSingle();
+      const accent = (!error && data) ? data.accent_color : ACCENT_DEFAULT;
+      const bg = (!error && data) ? data.background_color : BG_DEFAULT;
+      document.getElementById('corAccent').value = accent;
+      document.getElementById('corAccentHex').value = accent;
+      document.getElementById('corBg').value = bg;
+      document.getElementById('corBgHex').value = bg;
       updateMiniPreview();
     }
 
@@ -1784,16 +1884,19 @@
       showToast('Cores restauradas para o padrão (não esqueça de salvar).', 'success');
     }
 
-    function saveColors() {
+    async function saveColors() {
       const accent = document.getElementById('corAccent').value;
       const bg = document.getElementById('corBg').value;
       const bg2 = lightenHex(bg, 10);
-      localStorage.setItem(COLORS_KEY, JSON.stringify({ accent, bg, bg2 }));
+      const { error } = await sb.from('theme_settings').upsert(
+        { client_id: CLIENT_ID, accent_color: accent, background_color: bg, background_color_2: bg2 },
+        { onConflict: 'client_id' }
+      );
+      if (error) { showToast('Erro ao salvar cores.', 'error'); return; }
       showToast('Cores salvas! As mudanças já aparecem no site.', 'success');
     }
 
     // ── SOBRE ──
-    const SOBRE_KEY = 'flavia_sobre';
     const SOBRE_DEFAULT = {
       nome: 'Flávia',
       texto: 'Corretora de imóveis apaixonada por conectar pessoas ao lugar certo. Com anos de experiência no mercado de Bauru, ofereço um atendimento diferenciado, honesto e sem pressão.',
@@ -1801,10 +1904,10 @@
     };
     let sobreChips = [];
 
-    function loadSobre() {
-      const raw = localStorage.getItem(SOBRE_KEY);
-      const data = raw ? JSON.parse(raw) : SOBRE_DEFAULT;
-      sobreChips = [...(data.chips || SOBRE_DEFAULT.chips)];
+    async function loadSobre() {
+      const { data: row, error } = await sb.from('about_sections').select('*').eq('client_id', CLIENT_ID).maybeSingle();
+      const data = (!error && row) ? { nome: row.name, texto: row.bio, chips: row.chips } : SOBRE_DEFAULT;
+      sobreChips = [...((data.chips && data.chips.length) ? data.chips : SOBRE_DEFAULT.chips)];
       document.getElementById('sNome').value = data.nome || SOBRE_DEFAULT.nome;
       document.getElementById('sTexto').value = data.texto || SOBRE_DEFAULT.texto;
       renderSobreChips();
@@ -1832,30 +1935,30 @@
       renderSobreChips();
     }
 
-    function saveSobre() {
+    async function saveSobre() {
       const nome = document.getElementById('sNome').value.trim();
       const texto = document.getElementById('sTexto').value.trim();
       if (!nome || !texto) {
         showToast('Preencha nome e texto.', 'error');
         return;
       }
-      localStorage.setItem(SOBRE_KEY, JSON.stringify({ nome, texto, chips: [...sobreChips] }));
+      const { error } = await sb.from('about_sections').upsert(
+        { client_id: CLIENT_ID, name: nome, bio: texto, chips: [...sobreChips] },
+        { onConflict: 'client_id' }
+      );
+      if (error) { showToast('Erro ao salvar seção Sobre.', 'error'); return; }
       showToast('Seção "Sobre" salva com sucesso!', 'success');
     }
 
-    // ── COMMENTS STORAGE ──
-    const COMMENTS_KEY = 'flavia_comentarios';
+    // ── COMMENTS (Supabase) ──
     let comments = [];
     let editingCommentId = null;
     let deletingCommentId = null;
 
-    function loadComments() {
-      const raw = localStorage.getItem(COMMENTS_KEY);
-      comments = raw ? JSON.parse(raw) : [];
-    }
-
-    function persistComments() {
-      localStorage.setItem(COMMENTS_KEY, JSON.stringify(comments));
+    async function loadComments() {
+      const { data, error } = await sb.from('testimonials').select('*').eq('client_id', CLIENT_ID).order('created_at');
+      if (error) { showToast('Erro ao carregar comentários.', 'error'); return; }
+      comments = data || [];
     }
 
     // ── COMMENTS RENDER ──
@@ -1908,23 +2011,24 @@
       if (e.target === document.getElementById('commentModalOverlay')) closeCommentModal();
     }
 
-    function saveComment() {
+    async function saveComment() {
       const name = document.getElementById('cName').value.trim();
       const text = document.getElementById('cText').value.trim();
       if (!name || !text) {
         showToast('Preencha nome e depoimento.', 'error');
         return;
       }
-      const data = { name, role: document.getElementById('cRole').value.trim(), text };
+      const role = document.getElementById('cRole').value.trim();
       if (editingCommentId) {
-        const idx = comments.findIndex(c => c.id === editingCommentId);
-        if (idx !== -1) comments[idx] = { ...comments[idx], ...data };
+        const { error } = await sb.from('testimonials').update({ name, role, text }).eq('id', editingCommentId);
+        if (error) { showToast('Erro ao atualizar comentário.', 'error'); return; }
         showToast('Comentário atualizado!', 'success');
       } else {
-        comments.push({ id: genId(), ...data });
+        const { error } = await sb.from('testimonials').insert({ client_id: CLIENT_ID, name, role, text });
+        if (error) { showToast('Erro ao adicionar comentário.', 'error'); return; }
         showToast('Comentário adicionado!', 'success');
       }
-      persistComments();
+      await loadComments();
       renderComments();
       closeCommentModal();
     }
@@ -1939,13 +2043,15 @@
     }
 
     // ── INIT ──
-    document.addEventListener('DOMContentLoaded', () => {
-      loadFromStorage();
+    document.addEventListener('DOMContentLoaded', async () => {
+      const session = await requireAuth();
+      if (!session) return;
+      await loadProperties();
       renderAll();
-      loadComments();
+      await loadComments();
       renderComments();
-      loadSobre();
-      loadColors();
+      await loadSobre();
+      await loadColors();
     });
   </script>
 </body>

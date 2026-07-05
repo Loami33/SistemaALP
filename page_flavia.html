@@ -743,15 +743,14 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/client-config.js"></script>
   <script>
-    const STORAGE_KEY = 'flavia_imoveis';
-
-    const DEFAULT_PROPERTIES = [
-      { id: 'r1', category: 'Residencial', title: 'Casa 3 quartos', location: 'Jardim Europa', price: 'R$ 480.000', images: [], videoUrl: '', status: 'disponivel' },
-      { id: 'c1', category: 'Comercial', title: 'Sala comercial', location: 'Centro', price: 'R$ 320.000', images: [], videoUrl: '', status: 'disponivel' },
-      { id: 'a1', category: 'Apartamento', title: 'Apto 2 quartos', location: 'Higienópolis', price: 'R$ 290.000', images: [], videoUrl: '', status: 'disponivel' },
-      { id: 't1', category: 'Terreno', title: 'Terreno 500m²', location: 'Novo Bauru', price: 'R$ 180.000', images: [], videoUrl: '', status: 'disponivel' }
-    ];
+    const sb = window.supabase.createClient(
+      SISTEMA_ALP_CONFIG.supabaseUrl,
+      SISTEMA_ALP_CONFIG.supabaseAnonKey
+    );
+    const CLIENT_ID = SISTEMA_ALP_CONFIG.clientId;
 
     const CAT_CONFIG = {
       'Residencial': { cls: 'card-img-res', icon: 'ti-building-estate' },
@@ -771,12 +770,28 @@
 
     let PROPS_CACHE = [];
 
-    function loadProperties() {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      const all = raw ? JSON.parse(raw) : DEFAULT_PROPERTIES;
-      PROPS_CACHE = all;
-      const available = all.filter(p => p.status === 'disponivel');
+    async function loadProperties() {
       const container = document.getElementById('imovelCards');
+      const { data, error } = await sb
+        .from('properties')
+        .select('*, property_images(*)')
+        .eq('client_id', CLIENT_ID)
+        .eq('status', 'disponivel')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        container.innerHTML = '<p class="card-empty">Não foi possível carregar os imóveis no momento.</p>';
+        return;
+      }
+
+      const available = (data || []).map(p => {
+        const imgs = (p.property_images || []).slice().sort((a, b) => a.position - b.position);
+        return {
+          ...p,
+          images: imgs.map(img => sb.storage.from('property-images').getPublicUrl(img.storage_path).data.publicUrl)
+        };
+      });
+      PROPS_CACHE = available;
 
       if (!available.length) {
         container.innerHTML = '<p class="card-empty">Nenhum imóvel disponível no momento.</p>';
@@ -790,9 +805,7 @@
         const imgHtml = hasImg
           ? `<img class="card-img-el" src="${images[0]}" alt="${p.title}">`
           : `<i class="ti ${cfg.icon} card-icon" aria-hidden="true"></i>`;
-        const embedUrl = getEmbedUrl(p.videoUrl);
-        const isLocalVideo = p.videoUrl && p.videoUrl.startsWith('data:video');
-        const hasVideo = embedUrl || isLocalVideo;
+        const hasVideo = p.video_type === 'upload' || getEmbedUrl(p.video_url);
         const videoBtn = hasVideo
           ? `<button class="video-play-btn" onclick="openVideo('${p.id}')" aria-label="Ver vídeo do imóvel"><i class="ti ti-player-play"></i></button>`
           : '';
@@ -851,18 +864,18 @@
     }
 
     function openVideo(id) {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      const all = raw ? JSON.parse(raw) : DEFAULT_PROPERTIES;
-      const p = all.find(pr => pr.id === id);
-      if (!p || !p.videoUrl) return;
+      const p = PROPS_CACHE.find(pr => pr.id === id);
+      if (!p || !p.video_url) return;
 
       const content = document.getElementById('videoModalContent');
-      const embedUrl = getEmbedUrl(p.videoUrl);
 
-      if (embedUrl) {
-        content.innerHTML = `<iframe src="${embedUrl}" allowfullscreen style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;display:block;"></iframe>`;
-      } else if (p.videoUrl.startsWith('data:video')) {
-        content.innerHTML = `<video controls autoplay style="width:100%;border-radius:12px;display:block;" src="${p.videoUrl}"></video>`;
+      if (p.video_type === 'upload') {
+        content.innerHTML = `<video controls autoplay style="width:100%;border-radius:12px;display:block;" src="${p.video_url}"></video>`;
+      } else {
+        const embedUrl = getEmbedUrl(p.video_url);
+        if (embedUrl) {
+          content.innerHTML = `<iframe src="${embedUrl}" allowfullscreen style="width:100%;aspect-ratio:16/9;border:none;border-radius:12px;display:block;"></iframe>`;
+        }
       }
 
       document.getElementById('videoModal').classList.add('open');
@@ -873,11 +886,9 @@
       document.getElementById('videoModalContent').innerHTML = '';
     }
 
-    function loadDepoimentos() {
-      const raw = localStorage.getItem('flavia_comentarios');
-      if (!raw) return;
-      const list = JSON.parse(raw);
-      if (!list.length) return;
+    async function loadDepoimentos() {
+      const { data: list, error } = await sb.from('testimonials').select('*').eq('client_id', CLIENT_ID).order('created_at');
+      if (error || !list || !list.length) return;
       const section = document.getElementById('depoimentos');
       const grid = document.getElementById('depGrid');
       grid.innerHTML = list.map(c => `
@@ -893,31 +904,35 @@
     }
 
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeVideo(); });
-    function loadSobre() {
-      const raw = localStorage.getItem('flavia_sobre');
-      if (!raw) return;
-      const data = JSON.parse(raw);
-      if (data.nome) {
-        document.getElementById('sobreNome').textContent = data.nome;
-        document.getElementById('sobreAvatar').textContent = data.nome.charAt(0).toUpperCase();
+
+    async function loadSobre() {
+      const { data, error } = await sb.from('about_sections').select('*').eq('client_id', CLIENT_ID).maybeSingle();
+      if (error || !data) return;
+      if (data.name) {
+        document.getElementById('sobreNome').textContent = data.name;
+        document.getElementById('sobreAvatar').textContent = data.name.charAt(0).toUpperCase();
       }
-      if (data.texto) document.getElementById('sobreTexto').textContent = data.texto;
+      if (data.bio) document.getElementById('sobreTexto').textContent = data.bio;
       if (data.chips && data.chips.length) {
         document.getElementById('sobreChips').innerHTML = data.chips.map(c => `<span class="chip">${c}</span>`).join('');
       }
     }
 
-    function applyCores() {
-      const raw = localStorage.getItem('flavia_cores');
-      if (!raw) return;
-      const data = JSON.parse(raw);
+    async function applyCores() {
+      const { data, error } = await sb.from('theme_settings').select('*').eq('client_id', CLIENT_ID).maybeSingle();
+      if (error || !data) return;
       const root = document.documentElement;
-      if (data.accent) root.style.setProperty('--color-accent', data.accent);
-      if (data.bg) root.style.setProperty('--color-background-primary', data.bg);
-      if (data.bg2) root.style.setProperty('--color-background-secondary', data.bg2);
+      if (data.accent_color) root.style.setProperty('--color-accent', data.accent_color);
+      if (data.background_color) root.style.setProperty('--color-background-primary', data.background_color);
+      if (data.background_color_2) root.style.setProperty('--color-background-secondary', data.background_color_2);
     }
 
-    document.addEventListener('DOMContentLoaded', () => { applyCores(); loadProperties(); loadDepoimentos(); loadSobre(); });
+    document.addEventListener('DOMContentLoaded', async () => {
+      await applyCores();
+      await loadProperties();
+      await loadDepoimentos();
+      await loadSobre();
+    });
   </script>
 </body>
 </html>

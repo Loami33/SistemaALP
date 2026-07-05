@@ -244,6 +244,56 @@
       color: rgba(196,160,100,0.75);
     }
 
+    .card-img-el {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.45);
+      color: #fff;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+      z-index: 2;
+    }
+    .carousel-arrow:hover { background: rgba(0,0,0,0.75); }
+    .carousel-arrow.left { left: 8px; }
+    .carousel-arrow.right { right: 8px; }
+
+    .carousel-dots {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 5px;
+      z-index: 2;
+    }
+
+    .c-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .c-dot.active { background: #fff; transform: scale(1.3); }
+
     .card-tag {
       position: absolute;
       top: 12px;
@@ -719,9 +769,12 @@
       return null;
     }
 
+    let PROPS_CACHE = [];
+
     function loadProperties() {
       const raw = localStorage.getItem(STORAGE_KEY);
       const all = raw ? JSON.parse(raw) : DEFAULT_PROPERTIES;
+      PROPS_CACHE = all;
       const available = all.filter(p => p.status === 'disponivel');
       const container = document.getElementById('imovelCards');
 
@@ -732,22 +785,29 @@
 
       container.innerHTML = available.map(p => {
         const cfg = CAT_CONFIG[p.category] || CAT_CONFIG['Residencial'];
-        const hasImg = p.images && p.images.length > 0;
-        const imgStyle = hasImg ? `style="background-image:url('${p.images[0]}');background-size:cover;background-position:center;"` : '';
-        const iconHtml = hasImg ? '' : `<i class="ti ${cfg.icon} card-icon" aria-hidden="true"></i>`;
+        const images = p.images || [];
+        const hasImg = images.length > 0;
+        const imgHtml = hasImg
+          ? `<img class="card-img-el" src="${images[0]}" alt="${p.title}">`
+          : `<i class="ti ${cfg.icon} card-icon" aria-hidden="true"></i>`;
         const embedUrl = getEmbedUrl(p.videoUrl);
         const isLocalVideo = p.videoUrl && p.videoUrl.startsWith('data:video');
         const hasVideo = embedUrl || isLocalVideo;
         const videoBtn = hasVideo
           ? `<button class="video-play-btn" onclick="openVideo('${p.id}')" aria-label="Ver vídeo do imóvel"><i class="ti ti-player-play"></i></button>`
           : '';
+        const carouselControls = images.length > 1 ? `
+              <button class="carousel-arrow left" onclick="event.stopPropagation();changeCardImg(this.closest('.card-img'),-1)" aria-label="Foto anterior"><i class="ti ti-chevron-left"></i></button>
+              <button class="carousel-arrow right" onclick="event.stopPropagation();changeCardImg(this.closest('.card-img'),1)" aria-label="Próxima foto"><i class="ti ti-chevron-right"></i></button>
+              <div class="carousel-dots">${images.map((_, i) => `<span class="c-dot ${i === 0 ? 'active' : ''}" onclick="event.stopPropagation();goToCardImg(this.closest('.card-img'),${i})"></span>`).join('')}</div>` : '';
 
         return `
           <article class="card">
-            <div class="card-img ${hasImg ? '' : cfg.cls}" ${imgStyle}>
-              ${iconHtml}
+            <div class="card-img ${hasImg ? '' : cfg.cls}" data-pid="${p.id}" data-idx="0" ontouchstart="cardTouchStart(event)" ontouchend="cardTouchEnd(event)">
+              ${imgHtml}
               <span class="card-tag">${p.category}</span>
               ${videoBtn}
+              ${carouselControls}
             </div>
             <div class="card-body">
               <div class="card-title">${p.title}</div>
@@ -756,6 +816,38 @@
             </div>
           </article>`;
       }).join('');
+    }
+
+    function setCardImg(cardEl, prop, idx) {
+      cardEl.dataset.idx = idx;
+      cardEl.querySelector('.card-img-el').src = prop.images[idx];
+      cardEl.querySelectorAll('.c-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+    }
+
+    function changeCardImg(cardEl, dir) {
+      if (!cardEl) return;
+      const prop = PROPS_CACHE.find(p => p.id === cardEl.dataset.pid);
+      if (!prop || !prop.images || prop.images.length < 2) return;
+      const idx = (parseInt(cardEl.dataset.idx, 10) + dir + prop.images.length) % prop.images.length;
+      setCardImg(cardEl, prop, idx);
+    }
+
+    function goToCardImg(cardEl, idx) {
+      if (!cardEl) return;
+      const prop = PROPS_CACHE.find(p => p.id === cardEl.dataset.pid);
+      if (!prop || !prop.images) return;
+      setCardImg(cardEl, prop, idx);
+    }
+
+    let cardTouchStartX = null;
+    function cardTouchStart(e) {
+      cardTouchStartX = e.touches[0].clientX;
+    }
+    function cardTouchEnd(e) {
+      if (cardTouchStartX === null) return;
+      const dx = e.changedTouches[0].clientX - cardTouchStartX;
+      if (Math.abs(dx) > 40) changeCardImg(e.currentTarget, dx > 0 ? -1 : 1);
+      cardTouchStartX = null;
     }
 
     function openVideo(id) {

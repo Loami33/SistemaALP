@@ -289,6 +289,31 @@
       gap: 4px;
     }
 
+    .badge-listing {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.55);
+      color: #fff;
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .prop-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 0.76rem;
+      color: var(--text-light);
+    }
+    .prop-features span { display: flex; align-items: center; gap: 3px; }
+    .prop-features i { color: var(--olive); font-size: 0.85rem; }
+
     .prop-body { padding: 13px 15px 0; }
 
     .prop-title {
@@ -771,7 +796,42 @@
       margin-top: 2px;
     }
 
+    .comment-stars { color: var(--accent-gold); font-size: 0.85rem; letter-spacing: 2px; }
+
+    .comment-photo {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .comment-author-row { display: flex; align-items: center; gap: 8px; }
+
     .comment-actions { display: flex; gap: 8px; }
+
+    /* ── LEADS ── */
+    .lead-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .lead-card {
+      background: var(--white);
+      border-radius: 14px;
+      border: 1.5px solid #eaece6;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      padding: 1.1rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .lead-name { font-size: 0.98rem; font-weight: 600; color: var(--text-dark); }
+    .lead-meta { font-size: 0.84rem; color: var(--text-mid); }
+    .lead-date { font-size: 0.74rem; color: var(--text-light); margin-top: 4px; }
+
+    .lead-actions { display: flex; gap: 8px; margin-top: 8px; }
 
     /* ── SOBRE PANEL ── */
     .sobre-panel {
@@ -1085,6 +1145,9 @@
       <button class="snav" onclick="switchSection('cores', this)">
         <i class="ti ti-palette"></i> Cores
       </button>
+      <button class="snav" onclick="switchSection('leads', this)">
+        <i class="ti ti-address-book"></i> Leads
+      </button>
     </div>
 
     <!-- Imóveis -->
@@ -1159,6 +1222,15 @@
 
       <div class="sobre-panel">
         <div class="form-group">
+          <label>Foto profissional <span style="font-weight:400;text-transform:none;font-size:0.78rem;color:var(--text-light)">(opcional)</span></label>
+          <div class="upload-area small" onclick="document.getElementById('sPhotoFile').click()">
+            <i class="ti ti-camera-plus"></i>
+            <span>Clique para enviar uma foto</span>
+          </div>
+          <input type="file" id="sPhotoFile" accept="image/*" style="display:none" onchange="handleSobrePhoto(this)">
+          <div class="image-preview" id="sobrePhotoPreview"></div>
+        </div>
+        <div class="form-group">
           <label for="sNome">Nome</label>
           <input type="text" id="sNome" placeholder="Ex: Flávia">
         </div>
@@ -1166,12 +1238,34 @@
           <label for="sTexto">Texto / Biografia</label>
           <textarea id="sTexto" rows="5" placeholder="Escreva uma apresentação..."></textarea>
         </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="sCreci">CRECI</label>
+            <input type="text" id="sCreci" placeholder="Ex: CRECI/SP N° 328455-F">
+          </div>
+          <div class="form-group">
+            <label for="sAnos">Anos de mercado</label>
+            <input type="number" id="sAnos" min="0" placeholder="Ex: 8">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="sNegociacoes">Negociações realizadas</label>
+          <input type="number" id="sNegociacoes" min="0" placeholder="Ex: 200">
+        </div>
         <div class="form-group">
           <label>Diferenciais</label>
           <div id="sobreChipsList" class="sobre-chips-list"></div>
           <div class="sobre-chip-add">
             <input type="text" id="sChipInput" placeholder="Ex: Financiamento" onkeydown="if(event.key==='Enter')addSobreChip()">
             <button class="btn-add" onclick="addSobreChip()"><i class="ti ti-plus"></i> Adicionar</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Regiões atendidas</label>
+          <div id="sobreRegionsList" class="sobre-chips-list"></div>
+          <div class="sobre-chip-add">
+            <input type="text" id="sRegionInput" placeholder="Ex: Jardim Europa" onkeydown="if(event.key==='Enter')addSobreRegion()">
+            <button class="btn-add" onclick="addSobreRegion()"><i class="ti ti-plus"></i> Adicionar</button>
           </div>
         </div>
         <div style="display:flex;justify-content:flex-end;margin-top:0.5rem">
@@ -1231,6 +1325,17 @@
       </div>
     </div>
 
+    <!-- Leads -->
+    <div id="sec-leads" style="display:none">
+      <div class="stats-row" style="grid-template-columns:repeat(1,1fr);max-width:180px;margin-bottom:1.25rem">
+        <div class="stat-card">
+          <div class="stat-val" id="statTotalLeads">0</div>
+          <div class="stat-lbl">Leads</div>
+        </div>
+      </div>
+      <div class="lead-list" id="leadList"></div>
+    </div>
+
   </main>
 
   <!-- MODAL ADD/EDIT -->
@@ -1274,6 +1379,36 @@
           <div class="form-group">
             <label for="fPrice">Preço</label>
             <input type="text" id="fPrice" placeholder="Ex: R$ 480.000">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="fListingType">Venda ou aluguel</label>
+          <select id="fListingType">
+            <option value="venda">Venda</option>
+            <option value="aluguel">Aluguel</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fBedrooms">Quartos</label>
+            <input type="number" id="fBedrooms" min="0" placeholder="Ex: 3">
+          </div>
+          <div class="form-group">
+            <label for="fBathrooms">Banheiros</label>
+            <input type="number" id="fBathrooms" min="0" placeholder="Ex: 2">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fParking">Vagas</label>
+            <input type="number" id="fParking" min="0" placeholder="Ex: 2">
+          </div>
+          <div class="form-group">
+            <label for="fArea">Área (m²)</label>
+            <input type="number" id="fArea" min="0" placeholder="Ex: 120">
           </div>
         </div>
 
@@ -1337,8 +1472,34 @@
       </div>
       <div class="modal-body">
         <div class="form-group">
+          <label>Foto <span style="font-weight:400;text-transform:none;font-size:0.78rem;color:var(--text-light)">(opcional)</span></label>
+          <div class="upload-area small" onclick="document.getElementById('cPhotoFile').click()">
+            <i class="ti ti-camera-plus"></i>
+            <span>Clique para enviar uma foto</span>
+          </div>
+          <input type="file" id="cPhotoFile" accept="image/*" style="display:none" onchange="handleCommentPhoto(this)">
+          <div class="image-preview" id="commentPhotoPreview"></div>
+        </div>
+        <div class="form-group">
           <label for="cName">Nome</label>
           <input type="text" id="cName" placeholder="Ex: João Silva">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cPropertyType">Tipo de imóvel adquirido <span style="font-weight:400;text-transform:none;font-size:0.78rem;color:var(--text-light)">(opcional)</span></label>
+            <input type="text" id="cPropertyType" placeholder="Ex: Apartamento">
+          </div>
+          <div class="form-group">
+            <label for="cRating">Avaliação</label>
+            <select id="cRating">
+              <option value="">Sem nota</option>
+              <option value="5">★★★★★ (5)</option>
+              <option value="4">★★★★☆ (4)</option>
+              <option value="3">★★★☆☆ (3)</option>
+              <option value="2">★★☆☆☆ (2)</option>
+              <option value="1">★☆☆☆☆ (1)</option>
+            </select>
+          </div>
         </div>
         <div class="form-group">
           <label for="cRole">Contexto <span style="font-weight:400;text-transform:none;font-size:0.78rem;color:var(--text-light)">(opcional)</span></label>
@@ -1488,6 +1649,13 @@
         const imgHtml = hasImg ? `<img src="${p.images[0]}" alt="${p.title}">` : `<i class="ti ${cfg.icon} prop-thumb-icon"></i>`;
         const primaryBadge = hasImg && p.images.length > 1 ? `<span class="badge-imgs"><i class="ti ti-photo"></i>${p.images.length}</span>` : '';
         const videoBadge = p.video_url ? `<span class="badge-video"><i class="ti ti-player-play"></i></span>` : '';
+        const listingBadge = p.listing_type ? `<span class="badge-listing">${p.listing_type === 'aluguel' ? 'Aluguel' : 'Venda'}</span>` : '';
+        const featureItems = [];
+        if (p.bedrooms != null) featureItems.push(`<span><i class="ti ti-bed"></i>${p.bedrooms}</span>`);
+        if (p.bathrooms != null) featureItems.push(`<span><i class="ti ti-bath"></i>${p.bathrooms}</span>`);
+        if (p.parking_spots != null) featureItems.push(`<span><i class="ti ti-car"></i>${p.parking_spots}</span>`);
+        if (p.area != null) featureItems.push(`<span><i class="ti ti-ruler-2"></i>${p.area} m²</span>`);
+        const featuresRow = featureItems.length ? `<div class="prop-features">${featureItems.join('')}</div>` : '';
 
         return `
           <div class="prop-card">
@@ -1499,10 +1667,12 @@
               </div>
               ${primaryBadge}
               ${videoBadge}
+              ${listingBadge}
             </div>
             <div class="prop-body">
               <div class="prop-title">${p.title}</div>
               <div class="prop-location"><i class="ti ti-map-pin"></i>${p.location}</div>
+              ${featuresRow}
               <div class="prop-price">${p.price}</div>
             </div>
             <div class="prop-actions">
@@ -1528,6 +1698,11 @@
       document.getElementById('fPrice').value = '';
       document.getElementById('fCategory').value = 'Residencial';
       document.getElementById('fStatus').value = 'disponivel';
+      document.getElementById('fListingType').value = 'venda';
+      document.getElementById('fBedrooms').value = '';
+      document.getElementById('fBathrooms').value = '';
+      document.getElementById('fParking').value = '';
+      document.getElementById('fArea').value = '';
       switchVideoTab('url', document.querySelector('.vtab'));
 
       if (id) {
@@ -1539,6 +1714,11 @@
         document.getElementById('fTitle').value = p.title;
         document.getElementById('fLocation').value = p.location;
         document.getElementById('fPrice').value = p.price;
+        document.getElementById('fListingType').value = p.listing_type || 'venda';
+        document.getElementById('fBedrooms').value = p.bedrooms ?? '';
+        document.getElementById('fBathrooms').value = p.bathrooms ?? '';
+        document.getElementById('fParking').value = p.parking_spots ?? '';
+        document.getElementById('fArea').value = p.area ?? '';
 
         currentImages = (p.property_images || []).map(img => ({
           isNew: false,
@@ -1710,11 +1890,18 @@
           }
         }
 
+        const toIntOrNull = v => (v === '' || v === null || v === undefined) ? null : parseInt(v, 10);
+
         const data = {
           client_id: CLIENT_ID,
           category: document.getElementById('fCategory').value,
           status: document.getElementById('fStatus').value,
           title, location, price,
+          listing_type: document.getElementById('fListingType').value,
+          bedrooms: toIntOrNull(document.getElementById('fBedrooms').value),
+          bathrooms: toIntOrNull(document.getElementById('fBathrooms').value),
+          parking_spots: toIntOrNull(document.getElementById('fParking').value),
+          area: toIntOrNull(document.getElementById('fArea').value),
           video_url: videoUrl,
           video_type: videoType
         };
@@ -1773,17 +1960,26 @@
       document.getElementById('confirmOverlay').classList.remove('open');
       deletingId = null;
       deletingCommentId = null;
+      deletingLeadId = null;
       delete document.getElementById('confirmOverlay').dataset.mode;
     }
 
     async function doDelete() {
-      if (document.getElementById('confirmOverlay').dataset.mode === 'comment') {
+      const mode = document.getElementById('confirmOverlay').dataset.mode;
+      if (mode === 'comment') {
         const { error } = await sb.from('testimonials').delete().eq('id', deletingCommentId);
         if (error) { showToast('Erro ao remover comentário.', 'error'); return; }
         await loadComments();
         renderComments();
         cancelDelete();
         showToast('Comentário removido.', 'success');
+      } else if (mode === 'lead') {
+        const { error } = await sb.from('leads').delete().eq('id', deletingLeadId);
+        if (error) { showToast('Erro ao remover lead.', 'error'); return; }
+        await loadLeads();
+        renderLeads();
+        cancelDelete();
+        showToast('Lead removido.', 'success');
       } else {
         const prop = properties.find(p => p.id === deletingId);
         if (prop && prop.property_images && prop.property_images.length) {
@@ -1816,6 +2012,7 @@
       document.getElementById('sec-comentarios').style.display = sec === 'comentarios' ? '' : 'none';
       document.getElementById('sec-sobre').style.display = sec === 'sobre' ? '' : 'none';
       document.getElementById('sec-cores').style.display = sec === 'cores' ? '' : 'none';
+      document.getElementById('sec-leads').style.display = sec === 'leads' ? '' : 'none';
     }
 
     // ── CORES ──
@@ -1903,14 +2100,27 @@
       chips: ['CRECI/SP N° 328455-F', 'Financiamento', 'Avaliação gratuita', 'Imóvel na planta']
     };
     let sobreChips = [];
+    let sobreRegions = [];
+    let sobrePhotoFile = null;
+    let sobrePhotoUrl = null;
+    let sobrePhotoRemoved = false;
 
     async function loadSobre() {
       const { data: row, error } = await sb.from('about_sections').select('*').eq('client_id', CLIENT_ID).maybeSingle();
       const data = (!error && row) ? { nome: row.name, texto: row.bio, chips: row.chips } : SOBRE_DEFAULT;
       sobreChips = [...((data.chips && data.chips.length) ? data.chips : SOBRE_DEFAULT.chips)];
+      sobreRegions = (!error && row && row.regions) ? [...row.regions] : [];
+      sobrePhotoUrl = (!error && row) ? (row.photo_url || null) : null;
+      sobrePhotoFile = null;
+      sobrePhotoRemoved = false;
       document.getElementById('sNome').value = data.nome || SOBRE_DEFAULT.nome;
       document.getElementById('sTexto').value = data.texto || SOBRE_DEFAULT.texto;
+      document.getElementById('sCreci').value = (!error && row && row.creci) || '';
+      document.getElementById('sAnos').value = (!error && row && row.years_experience != null) ? row.years_experience : '';
+      document.getElementById('sNegociacoes').value = (!error && row && row.deals_count != null) ? row.deals_count : '';
       renderSobreChips();
+      renderSobreRegions();
+      renderSobrePhotoPreview();
     }
 
     function renderSobreChips() {
@@ -1935,6 +2145,53 @@
       renderSobreChips();
     }
 
+    function renderSobreRegions() {
+      document.getElementById('sobreRegionsList').innerHTML = sobreRegions.map((r, i) => `
+        <span class="sobre-chip-item">
+          ${r}
+          <button class="sobre-chip-del" onclick="removeSobreRegion(${i})"><i class="ti ti-x"></i></button>
+        </span>`).join('');
+    }
+
+    function addSobreRegion() {
+      const input = document.getElementById('sRegionInput');
+      const val = input.value.trim();
+      if (!val) return;
+      sobreRegions.push(val);
+      renderSobreRegions();
+      input.value = '';
+    }
+
+    function removeSobreRegion(idx) {
+      sobreRegions.splice(idx, 1);
+      renderSobreRegions();
+    }
+
+    function renderSobrePhotoPreview() {
+      const box = document.getElementById('sobrePhotoPreview');
+      const url = sobrePhotoFile ? URL.createObjectURL(sobrePhotoFile) : (!sobrePhotoRemoved ? sobrePhotoUrl : null);
+      box.innerHTML = url ? `
+        <div class="img-thumb" style="border-radius:50%">
+          <img src="${url}" alt="Foto da corretora" style="border-radius:50%">
+          <button class="img-thumb-del" onclick="removeSobrePhoto()">×</button>
+        </div>` : '';
+    }
+
+    async function handleSobrePhoto(input) {
+      const file = input.files[0];
+      if (!file) return;
+      sobrePhotoFile = await compressImage(file, 480);
+      sobrePhotoRemoved = false;
+      renderSobrePhotoPreview();
+      input.value = '';
+    }
+
+    function removeSobrePhoto() {
+      sobrePhotoFile = null;
+      sobrePhotoRemoved = true;
+      renderSobrePhotoPreview();
+    }
+
     async function saveSobre() {
       const nome = document.getElementById('sNome').value.trim();
       const texto = document.getElementById('sTexto').value.trim();
@@ -1942,11 +2199,34 @@
         showToast('Preencha nome e texto.', 'error');
         return;
       }
+
+      let photoUrl = sobrePhotoRemoved ? null : sobrePhotoUrl;
+      if (sobrePhotoFile) {
+        const path = `${CLIENT_ID}/about/${randomFileName('jpg')}`;
+        const { error: upErr } = await sb.storage.from('property-images').upload(path, sobrePhotoFile, { upsert: true });
+        if (upErr) { showToast('Erro ao enviar foto: ' + upErr.message, 'error'); return; }
+        photoUrl = sb.storage.from('property-images').getPublicUrl(path).data.publicUrl;
+      }
+
+      const creci = document.getElementById('sCreci').value.trim();
+      const anos = document.getElementById('sAnos').value;
+      const negociacoes = document.getElementById('sNegociacoes').value;
+
       const { error } = await sb.from('about_sections').upsert(
-        { client_id: CLIENT_ID, name: nome, bio: texto, chips: [...sobreChips] },
+        {
+          client_id: CLIENT_ID, name: nome, bio: texto, chips: [...sobreChips],
+          photo_url: photoUrl,
+          creci: creci || null,
+          years_experience: anos === '' ? null : parseInt(anos, 10),
+          deals_count: negociacoes === '' ? null : parseInt(negociacoes, 10),
+          regions: [...sobreRegions]
+        },
         { onConflict: 'client_id' }
       );
       if (error) { showToast('Erro ao salvar seção Sobre.', 'error'); return; }
+      sobrePhotoUrl = photoUrl;
+      sobrePhotoFile = null;
+      sobrePhotoRemoved = false;
       showToast('Seção "Sobre" salva com sucesso!', 'success');
     }
 
@@ -1971,10 +2251,14 @@
       }
       list.innerHTML = comments.map(c => `
         <div class="comment-card">
+          ${c.rating ? `<div class="comment-stars">${'★'.repeat(c.rating)}${'☆'.repeat(5 - c.rating)}</div>` : ''}
           <p class="comment-text">"${c.text}"</p>
-          <div class="comment-author">
-            <div class="comment-name">${c.name}</div>
-            ${c.role ? `<div class="comment-role">${c.role}</div>` : ''}
+          <div class="comment-author-row">
+            ${c.photo_url ? `<img class="comment-photo" src="${c.photo_url}" alt="${c.name}">` : ''}
+            <div class="comment-author">
+              <div class="comment-name">${c.name}</div>
+              ${(c.property_type || c.role) ? `<div class="comment-role">${[c.property_type, c.role].filter(Boolean).join(' · ')}</div>` : ''}
+            </div>
           </div>
           <div class="comment-actions">
             <button class="btn-edit" onclick="openCommentModal('${c.id}')"><i class="ti ti-edit"></i> Editar</button>
@@ -1984,11 +2268,45 @@
     }
 
     // ── COMMENT MODAL ──
+    let commentPhotoFile = null;
+    let commentPhotoUrl = null;
+    let commentPhotoRemoved = false;
+
+    function renderCommentPhotoPreview() {
+      const box = document.getElementById('commentPhotoPreview');
+      const url = commentPhotoFile ? URL.createObjectURL(commentPhotoFile) : (!commentPhotoRemoved ? commentPhotoUrl : null);
+      box.innerHTML = url ? `
+        <div class="img-thumb" style="border-radius:50%">
+          <img src="${url}" alt="Foto do cliente" style="border-radius:50%">
+          <button class="img-thumb-del" onclick="removeCommentPhoto()">×</button>
+        </div>` : '';
+    }
+
+    async function handleCommentPhoto(input) {
+      const file = input.files[0];
+      if (!file) return;
+      commentPhotoFile = await compressImage(file, 300);
+      commentPhotoRemoved = false;
+      renderCommentPhotoPreview();
+      input.value = '';
+    }
+
+    function removeCommentPhoto() {
+      commentPhotoFile = null;
+      commentPhotoRemoved = true;
+      renderCommentPhotoPreview();
+    }
+
     function openCommentModal(id = null) {
       editingCommentId = id;
       document.getElementById('cName').value = '';
       document.getElementById('cRole').value = '';
       document.getElementById('cText').value = '';
+      document.getElementById('cPropertyType').value = '';
+      document.getElementById('cRating').value = '';
+      commentPhotoFile = null;
+      commentPhotoUrl = null;
+      commentPhotoRemoved = false;
       if (id) {
         const c = comments.find(cm => cm.id === id);
         if (!c) return;
@@ -1996,9 +2314,13 @@
         document.getElementById('cName').value = c.name;
         document.getElementById('cRole').value = c.role || '';
         document.getElementById('cText').value = c.text;
+        document.getElementById('cPropertyType').value = c.property_type || '';
+        document.getElementById('cRating').value = c.rating || '';
+        commentPhotoUrl = c.photo_url || null;
       } else {
         document.getElementById('commentModalTitle').textContent = 'Novo Comentário';
       }
+      renderCommentPhotoPreview();
       document.getElementById('commentModalOverlay').classList.add('open');
     }
 
@@ -2019,12 +2341,26 @@
         return;
       }
       const role = document.getElementById('cRole').value.trim();
+      const property_type = document.getElementById('cPropertyType').value.trim();
+      const ratingRaw = document.getElementById('cRating').value;
+      const rating = ratingRaw === '' ? null : parseInt(ratingRaw, 10);
+
+      let photo_url = commentPhotoRemoved ? null : commentPhotoUrl;
+      if (commentPhotoFile) {
+        const path = `${CLIENT_ID}/testimonials/${randomFileName('jpg')}`;
+        const { error: upErr } = await sb.storage.from('property-images').upload(path, commentPhotoFile);
+        if (upErr) { showToast('Erro ao enviar foto: ' + upErr.message, 'error'); return; }
+        photo_url = sb.storage.from('property-images').getPublicUrl(path).data.publicUrl;
+      }
+
+      const payload = { name, role, text, property_type: property_type || null, rating, photo_url };
+
       if (editingCommentId) {
-        const { error } = await sb.from('testimonials').update({ name, role, text }).eq('id', editingCommentId);
+        const { error } = await sb.from('testimonials').update(payload).eq('id', editingCommentId);
         if (error) { showToast('Erro ao atualizar comentário.', 'error'); return; }
         showToast('Comentário atualizado!', 'success');
       } else {
-        const { error } = await sb.from('testimonials').insert({ client_id: CLIENT_ID, name, role, text });
+        const { error } = await sb.from('testimonials').insert({ client_id: CLIENT_ID, ...payload });
         if (error) { showToast('Erro ao adicionar comentário.', 'error'); return; }
         showToast('Comentário adicionado!', 'success');
       }
@@ -2042,6 +2378,49 @@
       document.getElementById('confirmOverlay').classList.add('open');
     }
 
+    // ── LEADS (Supabase) ──
+    let leads = [];
+    let deletingLeadId = null;
+
+    async function loadLeads() {
+      const { data, error } = await sb.from('leads').select('*').eq('client_id', CLIENT_ID).order('created_at', { ascending: false });
+      if (error) { leads = []; return; }
+      leads = data || [];
+    }
+
+    function renderLeads() {
+      document.getElementById('statTotalLeads').textContent = leads.length;
+      const list = document.getElementById('leadList');
+      if (!leads.length) {
+        list.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-address-book-off"></i><p>Nenhum lead recebido ainda.</p></div>`;
+        return;
+      }
+      list.innerHTML = leads.map(l => {
+        const date = new Date(l.created_at).toLocaleString('pt-BR');
+        const metaParts = [l.goal, l.budget_range, l.neighborhood].filter(Boolean);
+        return `
+          <div class="lead-card">
+            <div class="lead-name">${l.name}</div>
+            <div class="lead-meta"><i class="ti ti-brand-whatsapp"></i> ${l.whatsapp}</div>
+            ${metaParts.length ? `<div class="lead-meta">${metaParts.join(' · ')}</div>` : ''}
+            <div class="lead-date">${date}</div>
+            <div class="lead-actions">
+              <a class="btn-edit" style="text-decoration:none" href="https://wa.me/${l.whatsapp.replace(/\D/g,'')}" target="_blank"><i class="ti ti-brand-whatsapp"></i> Chamar</a>
+              <button class="btn-delete" onclick="confirmDeleteLead('${l.id}')"><i class="ti ti-trash"></i></button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function confirmDeleteLead(id) {
+      deletingLeadId = id;
+      const l = leads.find(le => le.id === id);
+      document.getElementById('confirmTitle').textContent = 'Remover lead?';
+      document.getElementById('confirmName').textContent = l ? `o lead de "${l.name}"` : 'este lead';
+      document.getElementById('confirmOverlay').dataset.mode = 'lead';
+      document.getElementById('confirmOverlay').classList.add('open');
+    }
+
     // ── INIT ──
     document.addEventListener('DOMContentLoaded', async () => {
       const session = await requireAuth();
@@ -2052,6 +2431,8 @@
       renderComments();
       await loadSobre();
       await loadColors();
+      await loadLeads();
+      renderLeads();
     });
   </script>
 </body>

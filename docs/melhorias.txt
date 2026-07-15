@@ -1,0 +1,295 @@
+Analise a landing page da corretora disponível no projeto e implemente melhorias focadas exclusivamente em aumentar a captação de clientes e a taxa de conversão, mantendo a identidade visual atual e sem realizar alterações desnecessárias na arquitetura do projeto.
+
+Objetivo principal:
+Transformar a página de apresentação atual em uma landing page com foco comercial e geração de leads para uma corretora de imóveis.
+
+Antes de implementar:
+1. Analise a estrutura atual da página.
+2. Identifique componentes reaproveitáveis.
+3. Apresente um plano resumido das alterações.
+4. Informe quais arquivos serão modificados.
+5. Aguarde autorização antes de alterações estruturais grandes.
+
+Prioridade máxima:
+- Conversão.
+- Captação de leads.
+- Facilidade de contato.
+- Experiência mobile.
+- Velocidade de carregamento.
+
+Implementar as seguintes melhorias:
+
+# 1. Hero Section mais orientada à conversão
+
+Substituir o foco institucional por um foco em ação.
+
+Adicionar:
+- Headline forte:
+  "Encontre o imóvel ideal para sua família em poucos minutos."
+- Subheadline:
+  "Compra, venda e aluguel com atendimento personalizado e acompanhamento completo."
+- CTA principal:
+  "Encontrar meu imóvel"
+- CTA secundário:
+  "Falar no WhatsApp"
+
+Adicionar botão de WhatsApp com mensagem automática:
+
+"Olá, vi seu site e gostaria de receber ajuda para encontrar um imóvel."
+
+---
+
+# 2. Adicionar busca rápida logo no topo
+
+Criar um formulário simples contendo:
+
+- Objetivo:
+  - Comprar
+  - Alugar
+  - Vender
+
+- Tipo:
+  - Casa
+  - Apartamento
+  - Terreno
+  - Comercial
+
+- Faixa de preço
+
+- Bairro
+
+Botão:
+
+"Encontrar imóveis"
+
+Mesmo que inicialmente o botão apenas abra o WhatsApp preenchendo os dados selecionados.
+
+---
+
+# 3. Melhorar a seção de imóveis em destaque
+
+Atualmente os imóveis não possuem imagens.
+
+Preparar a estrutura para:
+
+- Foto principal
+- Valor
+- Bairro
+- Cidade
+- Quantidade de quartos
+- Banheiros
+- Vagas
+- Área
+- Tipo do imóvel
+- Venda ou aluguel
+
+Adicionar:
+
+- Botão "Ver detalhes"
+- Botão "Tenho interesse"
+
+Caso ainda não existam imagens:
+- Utilizar placeholders elegantes.
+- Não deixar cartões vazios.
+
+---
+
+# 4. Exibir pelo menos 6 imóveis na home
+
+Objetivo:
+Reduzir o número de cliques até o contato.
+
+Não obrigar o usuário a acessar outra página antes de visualizar oportunidades.
+
+---
+
+# 5. Adicionar seção de diferenciais
+
+Criar cards destacando:
+
+- Atendimento personalizado
+- Avaliação gratuita
+- Financiamento facilitado
+- Imóveis na planta
+- Acompanhamento documental
+- Atendimento rápido via WhatsApp
+
+---
+
+# 6. Melhorar a seção sobre a corretora
+
+Adicionar espaço para:
+
+- Foto profissional.
+- CRECI.
+- Tempo de mercado.
+- Número de negociações realizadas.
+- Especialização regional.
+
+Objetivo:
+Gerar confiança e autoridade.
+
+---
+
+# 7. Melhorar os depoimentos
+
+Adicionar:
+
+- Nome do cliente
+- Tipo de imóvel adquirido
+- Pequena foto opcional
+- Avaliação com estrelas
+
+Caso ainda não existam depoimentos reais:
+- Criar placeholders facilmente substituíveis posteriormente.
+
+---
+
+# 8. Adicionar seção "Regiões atendidas"
+
+Exemplo:
+
+- Centro
+- Jardim Europa
+- Vila Aviação
+- Estoril
+- Altos da Cidade
+
+Utilizar chips ou cards clicáveis.
+
+---
+
+# 9. Adicionar formulário de captação
+
+Campos:
+
+- Nome
+- WhatsApp
+- Objetivo:
+  Comprar, vender ou alugar
+- Faixa de investimento
+- Bairro desejado
+
+Botão:
+
+"Quero receber oportunidades"
+
+---
+
+# 10. Criar CTA intermediários
+
+Adicionar chamadas de ação ao longo da página:
+
+- "Agende uma visita"
+- "Receba oportunidades exclusivas"
+- "Descubra quanto vale seu imóvel"
+- "Fale diretamente com a corretora"
+
+---
+
+# 11. Adicionar botão flutuante de WhatsApp
+
+Requisitos:
+
+- Sempre visível no mobile.
+- Não atrapalhar a navegação.
+- Abrir conversa automaticamente.
+
+---
+
+# 12. Melhorar responsividade
+
+Verificar:
+
+- Mobile first.
+- Espaçamento.
+- Tamanho dos botões.
+- Legibilidade.
+- Tamanho das imagens.
+- Scroll confortável.
+
+Objetivo:
+Excelente experiência em telas pequenas.
+
+---
+
+# 13. Melhorar performance
+
+Implementar:
+
+- Lazy loading das imagens.
+- Compressão automática.
+- Evitar imagens pesadas.
+- Evitar JavaScript desnecessário.
+- Priorizar LCP e CLS baixos.
+
+Objetivo:
+
+- Performance acima de 90 no Lighthouse.
+- Boa experiência em conexões móveis.
+
+---
+
+# 14. Melhorias de SEO local
+
+Adicionar:
+
+- Meta title otimizado.
+- Meta description.
+- Open Graph.
+- Structured Data Local Business.
+- Schema Realtor.
+- Cidade e região atendidas.
+
+---
+
+# 15. Melhorias de confiança
+
+Adicionar:
+
+- CRECI em destaque.
+- Link para Instagram.
+- WhatsApp.
+- Política de privacidade.
+- Horário de atendimento.
+- Localização de atuação.
+
+---
+
+# 16. Melhorias de UX
+
+Objetivo:
+
+Reduzir ao máximo o esforço cognitivo do visitante.
+
+O usuário deve entender em menos de 5 segundos:
+
+- Quem é a corretora.
+- Onde ela atua.
+- Como entrar em contato.
+- Como visualizar imóveis.
+- Como receber atendimento.
+
+---
+
+# 17. Restrições importantes
+
+- Não alterar o stack atual.
+- Não fazer refatorações desnecessárias.
+- Não alterar backend sem necessidade.
+- Não remover componentes existentes que já funcionam.
+- Reaproveitar o máximo possível da estrutura atual.
+- Manter carregamento rápido.
+
+---
+
+Ao final da análise apresente:
+
+1. Arquivos que serão alterados.
+2. Plano de implementação.
+3. Impacto esperado na conversão.
+4. Melhorias de SEO.
+5. Melhorias de UX.
+6. Melhorias de performance.
+7. Estimativa de aumento na geração de leads.
+8. Possíveis melhorias futuras.

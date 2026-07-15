@@ -292,7 +292,7 @@
 
     .client-row {
       display: grid;
-      grid-template-columns: 1.2fr 0.8fr 1fr;
+      grid-template-columns: 1.1fr 0.7fr 1fr auto;
       gap: 12px;
       align-items: center;
       padding: 0.9rem 1.5rem;
@@ -367,9 +367,169 @@
     .toast.success { background: #5c6b47; color: #fff; }
     .toast.error   { background: #dc2626; color: #fff; }
 
+    /* ── CONFIG DO DONO (PIX) ── */
+    .pix-row { display: flex; gap: 10px; align-items: flex-end; }
+    .pix-row .form-group { flex: 1; margin-bottom: 0; }
+    .btn-save-pix {
+      padding: 10px 16px;
+      background: #5c6b47;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      height: 42px;
+      transition: background 0.2s;
+    }
+    .btn-save-pix:hover { background: #4a5c3a; }
+
+    /* ── AÇÕES NA LINHA DO CLIENTE ── */
+    .btn-invoice {
+      padding: 7px 12px;
+      background: #eef0eb;
+      color: #4a5c3a;
+      border: 1px solid #d6dece;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      transition: background 0.18s;
+    }
+    .btn-invoice:hover { background: #dfe6d5; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.42);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: #fff;
+      border-radius: 18px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+    }
+
+    .modal-header {
+      padding: 1.1rem 1.4rem;
+      border-bottom: 1px solid #eef0eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      color: #2c3520;
+    }
+    .modal-close {
+      width: 28px;
+      height: 28px;
+      background: #eef0eb;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #5c6b47;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-body { padding: 1.4rem; }
+    .modal-body .form-group:last-child { margin-bottom: 0; }
+    .modal-body textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #d6dece;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: #2c3520;
+      background: #f6f8f3;
+      outline: none;
+      resize: vertical;
+      min-height: 60px;
+    }
+    .modal-footer {
+      padding: 1rem 1.4rem;
+      border-top: 1px solid #eef0eb;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .btn-cancel {
+      padding: 10px 16px;
+      background: #eef0eb;
+      color: #4a5c3a;
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.87rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ── FATURAS ── */
+    .invoice-row {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr 0.7fr 0.7fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 0.9rem 1.5rem;
+      border-bottom: 1px solid #f5f6f3;
+    }
+    .invoice-row:last-child { border-bottom: none; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      width: fit-content;
+    }
+    .badge-pending { background: #fdf2d8; color: #92620a; }
+    .badge-paid { background: #e2f0d9; color: #3d6b1f; }
+
+    .btn-toggle-status {
+      padding: 6px 11px;
+      border: 1px solid #d6dece;
+      background: #fff;
+      color: #4a5c3a;
+      border-radius: 8px;
+      font-size: 0.76rem;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-toggle-status:hover { background: #f6f8f3; }
+
     @media (max-width: 680px) {
       .form-grid { grid-template-columns: 1fr; }
       .client-row { grid-template-columns: 1fr; gap: 4px; }
+      .pix-row { flex-direction: column; align-items: stretch; }
+      .invoice-row { grid-template-columns: 1fr; gap: 6px; }
     }
   </style>
 </head>
@@ -429,6 +589,18 @@
         <span>Criar um cliente aqui já cria o login dele no Supabase e o registro inicial do site (imóveis, sobre, cores). Depois, copie o <strong>Client ID</strong> gerado e cole no <code>client-config.js</code> do deploy Vercel desse cliente.</span>
       </div>
 
+      <!-- Configuração PIX -->
+      <div class="add-card">
+        <h2><i class="ti ti-qrcode"></i> Sua chave PIX</h2>
+        <div class="pix-row">
+          <div class="form-group">
+            <label>Chave PIX (usada nas faturas enviadas aos clientes)</label>
+            <input type="text" id="ownerPixKey" placeholder="Ex: seuemail@exemplo.com, CPF ou telefone">
+          </div>
+          <button class="btn-save-pix" onclick="savePixKey()"><i class="ti ti-device-floppy"></i> Salvar</button>
+        </div>
+      </div>
+
       <!-- Formulário de adição -->
       <div class="add-card">
         <h2><i class="ti ti-building-plus"></i> Novo cliente</h2>
@@ -482,7 +654,40 @@
         <div id="clientsList"></div>
       </div>
 
+      <!-- Lista de faturas -->
+      <div class="users-card" style="margin-top:1.5rem;">
+        <div class="users-card-header">
+          <h2><i class="ti ti-receipt-2"></i> Faturas enviadas</h2>
+          <span class="count-badge" id="invoiceCount">0</span>
+        </div>
+        <div id="invoicesList"></div>
+      </div>
+
     </main>
+  </div>
+
+  <!-- MODAL FATURA -->
+  <div class="modal-overlay" id="invoiceModalOverlay" onclick="invoiceOverlayClick(event)">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="invoiceModalTitle">Nova fatura</h2>
+        <button class="modal-close" onclick="closeInvoiceModal()"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Valor (R$)</label>
+          <input type="number" id="invoiceAmount" min="0" step="0.01" placeholder="Ex: 450.00">
+        </div>
+        <div class="form-group">
+          <label>Descrição (opcional)</label>
+          <textarea id="invoiceDescription" placeholder="Ex: Landing page completa + painel admin"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeInvoiceModal()">Cancelar</button>
+        <button class="btn-add-user" id="sendInvoiceBtn" onclick="sendInvoice()"><i class="ti ti-brand-whatsapp"></i> Gerar e enviar no WhatsApp</button>
+      </div>
+    </div>
   </div>
 
   <!-- Toast -->
@@ -523,7 +728,9 @@
     function showPanel() {
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainPanel').style.display = 'block';
+      loadPixKey();
       loadClients();
+      loadInvoices();
     }
 
     async function sairOwner() {
@@ -531,10 +738,12 @@
       window.location.reload();
     }
 
+    let clients = [];
+
     async function loadClients() {
       const { data, error } = await sb.from('clients').select('*').order('created_at', { ascending: false });
       const list = document.getElementById('clientsList');
-      const clients = data || [];
+      clients = data || [];
       document.getElementById('clientCount').textContent = clients.length;
 
       if (error || !clients.length) {
@@ -556,7 +765,139 @@
             <div class="client-row-label">Client ID</div>
             <div class="client-id-copy" onclick="copyText('${c.id}')" title="Clique para copiar">${c.id}</div>
           </div>
+          <div>
+            <button class="btn-invoice" onclick="openInvoiceModal('${c.id}')"><i class="ti ti-receipt-2"></i> Fatura</button>
+          </div>
         </div>`).join('');
+    }
+
+    // ── PIX ──
+    async function loadPixKey() {
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) return;
+      const { data } = await sb.from('owner_settings').select('pix_key').eq('owner_id', session.user.id).maybeSingle();
+      document.getElementById('ownerPixKey').value = data?.pix_key || '';
+    }
+
+    async function savePixKey() {
+      const pixKey = document.getElementById('ownerPixKey').value.trim();
+      const { data: { session } } = await sb.auth.getSession();
+      const { error } = await sb.from('owner_settings').upsert(
+        { owner_id: session.user.id, pix_key: pixKey, updated_at: new Date().toISOString() },
+        { onConflict: 'owner_id' }
+      );
+      if (error) { showToast('Erro ao salvar chave PIX: ' + error.message, 'error'); return; }
+      showToast('Chave PIX salva!', 'success');
+    }
+
+    // ── FATURAS ──
+    let selectedClient = null;
+    let invoices = [];
+
+    function openInvoiceModal(clientId) {
+      selectedClient = clients.find(c => c.id === clientId);
+      if (!selectedClient) return;
+      document.getElementById('invoiceModalTitle').textContent = `Fatura — ${selectedClient.business_name}`;
+      document.getElementById('invoiceAmount').value = '';
+      document.getElementById('invoiceDescription').value = '';
+      document.getElementById('invoiceModalOverlay').classList.add('open');
+    }
+
+    function closeInvoiceModal() {
+      document.getElementById('invoiceModalOverlay').classList.remove('open');
+      selectedClient = null;
+    }
+
+    function invoiceOverlayClick(e) {
+      if (e.target === document.getElementById('invoiceModalOverlay')) closeInvoiceModal();
+    }
+
+    async function sendInvoice() {
+      if (!selectedClient) return;
+      const amount = parseFloat(document.getElementById('invoiceAmount').value);
+      const description = document.getElementById('invoiceDescription').value.trim();
+      if (!amount || amount <= 0) { showToast('Informe um valor válido.', 'error'); return; }
+
+      const pixKey = document.getElementById('ownerPixKey').value.trim();
+      if (!pixKey) { showToast('Cadastre sua chave PIX antes de enviar uma fatura.', 'error'); return; }
+
+      const phone = (selectedClient.contact_whatsapp || selectedClient.contact_phone || '').replace(/\D/g, '');
+      if (!phone) { showToast('Esse cliente não tem WhatsApp cadastrado.', 'error'); return; }
+
+      const btn = document.getElementById('sendInvoiceBtn');
+      btn.disabled = true;
+
+      try {
+        const { error } = await sb.from('invoices').insert({
+          client_id: selectedClient.id,
+          amount,
+          description: description || null,
+          pix_key_snapshot: pixKey,
+          status: 'pending'
+        });
+        if (error) { showToast('Erro ao salvar fatura: ' + error.message, 'error'); return; }
+
+        const valorFmt = amount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        let msg = `Olá, ${selectedClient.owner_name || selectedClient.business_name}! Segue a fatura referente à sua landing page:\n\n`;
+        msg += `💰 Valor: R$ ${valorFmt}\n`;
+        if (description) msg += `📝 ${description}\n`;
+        msg += `\n📌 Chave PIX para pagamento: ${pixKey}\n\nQualquer dúvida, me chama por aqui!`;
+
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
+        closeInvoiceModal();
+        showToast('Fatura registrada e mensagem aberta no WhatsApp!', 'success');
+        loadInvoices();
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function loadInvoices() {
+      const { data, error } = await sb.from('invoices').select('*, clients(business_name)').order('created_at', { ascending: false });
+      const list = document.getElementById('invoicesList');
+      invoices = data || [];
+      document.getElementById('invoiceCount').textContent = invoices.length;
+
+      if (error || !invoices.length) {
+        list.innerHTML = `<div class="empty-users"><i class="ti ti-receipt-off"></i><p>Nenhuma fatura enviada ainda.</p></div>`;
+        return;
+      }
+
+      list.innerHTML = invoices.map(inv => `
+        <div class="invoice-row">
+          <div>
+            <div class="client-row-label">Cliente</div>
+            <div class="client-row-value">${inv.clients?.business_name || '—'}</div>
+          </div>
+          <div>
+            <div class="client-row-label">Valor</div>
+            <div class="client-row-value">R$ ${Number(inv.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+          </div>
+          <div>
+            <div class="client-row-label">Data</div>
+            <div class="client-row-value">${new Date(inv.created_at).toLocaleDateString('pt-BR')}</div>
+          </div>
+          <div>
+            <span class="badge ${inv.status === 'paid' ? 'badge-paid' : 'badge-pending'}">
+              <i class="ti ti-${inv.status === 'paid' ? 'check' : 'clock'}"></i> ${inv.status === 'paid' ? 'Paga' : 'Pendente'}
+            </span>
+          </div>
+          <div>
+            <button class="btn-toggle-status" onclick="toggleInvoiceStatus('${inv.id}', '${inv.status === 'paid' ? 'pending' : 'paid'}')">
+              Marcar como ${inv.status === 'paid' ? 'pendente' : 'paga'}
+            </button>
+          </div>
+        </div>`).join('');
+    }
+
+    async function toggleInvoiceStatus(id, newStatus) {
+      const { error } = await sb.from('invoices').update({
+        status: newStatus,
+        paid_at: newStatus === 'paid' ? new Date().toISOString() : null
+      }).eq('id', id);
+      if (error) { showToast('Erro ao atualizar fatura: ' + error.message, 'error'); return; }
+      showToast(newStatus === 'paid' ? 'Fatura marcada como paga!' : 'Fatura marcada como pendente.', 'success');
+      loadInvoices();
     }
 
     function copyText(text) {

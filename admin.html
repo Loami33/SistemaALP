@@ -2223,7 +2223,7 @@
         },
         { onConflict: 'client_id' }
       );
-      if (error) { showToast('Erro ao salvar seção Sobre.', 'error'); return; }
+      if (error) { showToast('Erro ao salvar seção Sobre: ' + error.message, 'error'); return; }
       sobrePhotoUrl = photoUrl;
       sobrePhotoFile = null;
       sobrePhotoRemoved = false;

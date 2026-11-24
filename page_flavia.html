@@ -8,13 +8,13 @@
   <meta name="robots" content="index, follow">
   <title>Flávia Corretora de Imóveis em Bauru-SP | Compra, Venda e Aluguel</title>
   <!-- Ajuste o domínio abaixo para a URL final publicada -->
-  <link rel="canonical" href="https://flaviacorretora.vercel.app/">
+  <link rel="canonical" href="https://sistema-alp.vercel.app/">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="pt_BR">
   <meta property="og:site_name" content="Flávia Corretora de Imóveis">
   <meta property="og:title" content="Flávia Corretora de Imóveis em Bauru-SP">
   <meta property="og:description" content="Encontre o imóvel ideal para sua família em poucos minutos. Compra, venda e aluguel com atendimento personalizado.">
-  <meta property="og:url" content="https://flaviacorretora.vercel.app/">
+  <meta property="og:url" content="https://sistema-alp.vercel.app/">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Flávia Corretora de Imóveis em Bauru-SP">
   <meta name="twitter:description" content="Encontre o imóvel ideal para sua família em poucos minutos.">
@@ -33,7 +33,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/tabler-icons-iconfont@latest/dist/tabler-icons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" rel="stylesheet">
   <style>
     :root {
       --color-background-primary: #060606;
@@ -145,6 +145,138 @@
     .btn-outline,
     .btn-wpp {
       transition: all 0.22s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: 'DM Sans', sans-serif;
+      line-height: 1.2;
+    }
+
+    a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+
+    /* ── TOPO FIXO ── */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 700;
+      background: rgba(6,6,6,0.82);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--color-border-tertiary);
+    }
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      height: 62px;
+    }
+    .brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .brand span { color: var(--color-accent); }
+    .topnav { display: flex; gap: 1.4rem; }
+    .topnav a {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: color 0.18s;
+    }
+    .topnav a:hover { color: var(--color-accent); }
+    .topbar .btn-gold { padding: 9px 18px; font-size: 0.85rem; }
+    @media (max-width: 860px) { .topnav { display: none; } }
+
+    /* ── HERO EM DUAS COLUNAS ── */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2rem;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+    .hero-grid.has-photo { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+    .hero-photo {
+      display: none;
+      position: relative;
+      aspect-ratio: 4 / 5;
+      max-height: 380px;
+      width: 100%;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(196,160,100,0.35);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+    }
+    .hero-grid.has-photo .hero-photo { display: block; }
+    .hero-grid.has-photo h1 br { display: none; }
+    @media (max-width: 780px) { .hero h1 br { display: none; } }
+    @media (max-width: 520px) {
+      .topbar .btn-gold { width: auto; }
+      .hero .stats { grid-template-columns: repeat(3, 1fr) !important; }
+      .hero .stat { padding: 0.8rem 0.4rem; }
+      .hero .stat-num { font-size: 1.3rem; }
+      .hero .stat-label { font-size: 10px; }
+    }
+    .hero-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .hero-photo-tag {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      background: rgba(6,6,6,0.78);
+      backdrop-filter: blur(6px);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+    }
+    .hero-photo-tag strong {
+      display: block;
+      color: var(--color-text-primary);
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+    }
+    @media (max-width: 780px) {
+      .hero-grid.has-photo { grid-template-columns: 1fr; }
+      .hero-grid.has-photo .hero-photo { display: none; }
+    }
+
+    /* ── ESQUELETO DE CARREGAMENTO ── */
+    .card-skeleton {
+      height: 300px;
+      border-radius: 16px;
+      background: linear-gradient(100deg, var(--color-background-secondary) 30%, rgba(255,255,255,0.05) 50%, var(--color-background-secondary) 70%);
+      background-size: 200% 100%;
+      animation: shimmer 1.3s linear infinite;
+      border: 1px solid var(--color-border-tertiary);
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+    @media (prefers-reduced-motion: reduce) { .card-skeleton { animation: none; } html { scroll-behavior: auto; } }
+
+    .form-msg {
+      font-size: 0.85rem;
+      margin: 2px 0 10px;
+      color: #f08a8a;
+      display: none;
+    }
+    .lead-trust {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      color: var(--color-text-secondary);
+      margin-top: 12px;
+      justify-content: center;
     }
 
     .btn-gold {
@@ -547,9 +679,20 @@
 
     .dif-card strong {
       display: block;
-      font-size: 0.92rem;
+      font-size: 0.95rem;
       color: var(--color-text-primary);
     }
+
+    .dif-card span {
+      display: block;
+      font-size: 0.84rem;
+      color: var(--color-text-secondary);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .dif-card { transition: border-color 0.2s, transform 0.2s; }
+    .dif-card:hover { border-color: rgba(196,160,100,0.4); transform: translateY(-2px); }
 
     @media (max-width: 780px) { .dif-grid { grid-template-columns: 1fr 1fr; } }
     @media (max-width: 520px) { .dif-grid { grid-template-columns: 1fr; } }
@@ -589,14 +732,15 @@
 
     .sobre-inner {
       display: grid;
-      grid-template-columns: 80px minmax(0, 1fr);
-      gap: 18px;
+      grid-template-columns: 130px minmax(0, 1fr);
+      gap: 28px;
       align-items: start;
+      padding: 0 1.75rem;
     }
 
     .sobre-avatar {
-      width: 72px;
-      height: 72px;
+      width: 124px;
+      height: 124px;
       border-radius: 50%;
       background: linear-gradient(135deg,var(--color-accent),#8a6a30);
       display: flex;
@@ -809,8 +953,12 @@
 
       .sobre-inner {
         grid-template-columns: 1fr;
+        padding: 0 1.25rem;
       }
     }
+
+    .hero { padding-left: 2rem; padding-right: 2rem; margin-top: 1.25rem; }
+    @media (max-width: 520px) { .hero { padding-left: 1.25rem; padding-right: 1.25rem; } }
 
     .video-play-btn {
       position: absolute;
@@ -1051,18 +1199,103 @@
     @media (max-width: 780px) {
       .dep-grid { grid-template-columns: 1fr; }
     }
+    /* ══ MODO MINIMALISTA ══ (sobrescreve estilos acima) */
+    .section, .contact { padding: 4.5rem 0 0; }
+    .section-title, .contact h2 { font-size: 1.6rem; font-weight: 400; letter-spacing: -0.01em; }
+    .section-sub { margin-top: 0.4rem; margin-bottom: 2rem; }
+    .gold-line { display: none; }
+
+    .hero { background: transparent; border-radius: 0; padding: 4rem 0 1rem; margin-top: 0; }
+    .hero::before, .hero::after { display: none; }
+    .hero h1 { font-weight: 400; }
+    .hero h1 span { font-style: italic; }
+    .badge { border: none; padding: 0; letter-spacing: 3px; font-size: 11px; }
+    .hero-photo { border: none; box-shadow: none; border-radius: 4px; }
+    .hero-photo-tag { border-radius: 4px; }
+
+    .stats { background: transparent; border-top: 1px solid var(--color-border-tertiary); border-radius: 0; margin-top: 3rem; padding-top: 1.5rem; gap: 0; }
+    .stat { background: transparent; text-align: left; padding: 0; }
+    .stat-num { font-weight: 400; font-size: 1.8rem; }
+
+    .quick-search { background: transparent; border: none; border-top: 1px solid var(--color-border-tertiary); border-radius: 0; padding: 1.5rem 0 0; margin-top: 1.5rem; }
+    .quick-search-grid select, .quick-search-grid input,
+    .lead-form input, .lead-form select { background: transparent; border-radius: 6px; }
+
+    .card { background: transparent; border: none; box-shadow: none; border-radius: 0; }
+    .card-img { border-radius: 4px; overflow: hidden; height: 190px; }
+    .card-img-res, .card-img-com, .card-img-apt, .card-img-ter, .card-img { background: #141414; }
+    .card-icon { color: rgba(255,255,255,0.18); font-size: 2rem; }
+    .hero p { margin-top: 1rem; }
+    .card-body { padding: 14px 0 0; }
+    .card-tag { background: rgba(6,6,6,0.7); color: var(--color-text-primary); font-weight: 500; }
+    .card-price { font-weight: 400; }
+    .card-actions button { border-radius: 6px; font-weight: 500; }
+    .card-btn-interest { background: var(--color-accent); color: #0a0a0a; }
+
+    .btn-gold, .btn-outline { border-radius: 6px; font-weight: 500; }
+
+    .cta-banner { background: transparent; border: none; border-top: 1px solid var(--color-border-tertiary); border-bottom: 1px solid var(--color-border-tertiary); border-radius: 0; padding: 2rem 0; margin-top: 4.5rem; }
+    .cta-banner p { font-weight: 400; font-size: 1.3rem; }
+
+    .dif-grid { gap: 2.5rem 2rem; }
+    .dif-card { background: transparent; border: none; border-radius: 0; padding: 0; text-align: left; }
+    .dif-card:hover { transform: none; }
+    .dif-card i { font-size: 1.3rem; margin-bottom: 0.6rem; }
+    .dif-card strong { font-weight: 500; }
+
+    .region-chip { background: transparent; border-color: var(--color-border-tertiary); border-radius: 6px; }
+
+    .sobre { background: transparent; border-radius: 0; padding: 4.5rem 0 0; }
+    .sobre-inner { padding: 0; }
+    .sobre h2 { font-weight: 400; }
+    .chip { border-color: var(--color-border-tertiary); color: var(--color-text-secondary); border-radius: 6px; }
+
+    .lead-form-wrap { background: transparent; border: none; padding: 0; }
+
+    .contact-cards { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem; }
+    .contact-card { background: transparent; border: none; border-radius: 0; padding: 0; min-height: 0; text-align: left; gap: 4px; }
+    .contact-card i { font-size: 1.2rem; }
+    .contact-card strong { font-weight: 500; font-size: 0.95rem; }
+    .btn-wpp { width: auto; border-radius: 6px; font-weight: 500; margin-top: 2rem; padding: 12px 22px; font-size: 0.9rem; background: transparent; color: var(--color-text-primary); border: 1px solid rgba(255,255,255,0.28); }
+    .btn-wpp:hover { border-color: var(--color-accent); color: var(--color-accent); }
+    @media (max-width: 780px) { .contact-cards { grid-template-columns: 1fr 1fr; } }
+
+    .dep-card { background: transparent; border: none; border-top: 1px solid var(--color-border-tertiary); border-radius: 0; padding: 1.4rem 0 0; }
+
+    .footer { margin-top: 5rem; border-top: 1px solid var(--color-border-tertiary); padding: 2rem 1.2rem; }
   </style>
 </head>
 <body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="#">Flávia <span>Imóveis</span></a>
+      <nav class="topnav" aria-label="Seções do site">
+        <a href="#imoveis">Imóveis</a>
+        <a href="#diferenciais">Diferenciais</a>
+        <a href="#sobre">Sobre</a>
+        <a href="#contato">Contato</a>
+      </nav>
+      <a class="btn-gold" id="topWppBtn" href="#" target="_blank" rel="noreferrer noopener"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+    </div>
+  </header>
+
   <div class="container">
     <section class="hero" aria-label="Apresentação da corretora Flávia">
+     <div class="hero-grid" id="heroGrid">
+      <div>
       <div class="badge">Corretora de Imóveis · Bauru</div>
-      <h1>Encontre o imóvel ideal<br>para <span>sua família</span> em poucos minutos</h1>
+      <h1>Encontre o imóvel ideal <br>para <span>sua família</span> em poucos minutos</h1>
       <p>Compra, venda e aluguel com atendimento personalizado e acompanhamento completo.</p>
       <div class="hero-btns">
         <a class="btn-gold" href="#imoveis">Encontrar meu imóvel</a>
         <a class="btn-outline" id="heroWppBtn" href="#" target="_blank" rel="noreferrer noopener"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i> Falar no WhatsApp</a>
       </div>
+      </div>
+      <div class="hero-photo">
+        <img id="heroPhotoImg" alt="Flávia, corretora de imóveis em Bauru" fetchpriority="high">
+        <div class="hero-photo-tag"><strong id="heroPhotoName">Flávia</strong>Corretora de imóveis · CRECI/SP 328455-F</div>
+      </div>
+     </div>
       <div class="stats">
         <div class="stat">
           <div class="stat-num" id="statYears">8+</div>
@@ -1108,27 +1341,23 @@
       <div class="section-title">Imóveis em destaque</div>
       <div class="gold-line"></div>
       <div class="section-sub">Residencial e comercial em Bauru e região.</div>
-      <div class="cards" id="imovelCards">
-        <!-- preenchido pelo JavaScript -->
+      <div class="cards" id="imovelCards" aria-busy="true">
+        <div class="card-skeleton"></div><div class="card-skeleton"></div><div class="card-skeleton"></div>
       </div>
     </section>
 
-    <div class="cta-banner">
-      <p>Ainda não encontrou o que procura?</p>
-      <a class="btn-gold" id="ctaVisita" href="#" target="_blank" rel="noreferrer noopener">Agende uma visita</a>
-    </div>
 
     <section class="section" id="diferenciais">
       <div class="section-title">Por que negociar com a Flávia</div>
       <div class="gold-line"></div>
       <div class="section-sub">Um atendimento pensado para tirar o peso da sua decisão.</div>
       <div class="dif-grid">
-        <div class="dif-card"><i class="ti ti-heart-handshake" aria-hidden="true"></i><strong>Atendimento personalizado</strong></div>
-        <div class="dif-card"><i class="ti ti-report-money" aria-hidden="true"></i><strong>Avaliação gratuita</strong></div>
-        <div class="dif-card"><i class="ti ti-building-bank" aria-hidden="true"></i><strong>Financiamento facilitado</strong></div>
-        <div class="dif-card"><i class="ti ti-building-skyscraper" aria-hidden="true"></i><strong>Imóveis na planta</strong></div>
-        <div class="dif-card"><i class="ti ti-file-check" aria-hidden="true"></i><strong>Acompanhamento documental</strong></div>
-        <div class="dif-card"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i><strong>Atendimento rápido via WhatsApp</strong></div>
+        <div class="dif-card"><i class="ti ti-heart-handshake" aria-hidden="true"></i><strong>Atendimento personalizado</strong><span>Entendo o que você precisa antes de mostrar qualquer imóvel.</span></div>
+        <div class="dif-card"><i class="ti ti-report-money" aria-hidden="true"></i><strong>Avaliação gratuita</strong><span>Descubra quanto vale o seu imóvel, sem custo e sem compromisso.</span></div>
+        <div class="dif-card"><i class="ti ti-building-bank" aria-hidden="true"></i><strong>Financiamento facilitado</strong><span>Ajuda na simulação e no processo junto ao banco.</span></div>
+        <div class="dif-card"><i class="ti ti-building-skyscraper" aria-hidden="true"></i><strong>Imóveis na planta</strong><span>Acesso a lançamentos com condições de pagamento facilitadas.</span></div>
+        <div class="dif-card"><i class="ti ti-file-check" aria-hidden="true"></i><strong>Acompanhamento documental</strong><span>Cuido da papelada do começo até a entrega das chaves.</span></div>
+        <div class="dif-card"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i><strong>Atendimento rápido via WhatsApp</strong><span>Resposta ágil, direto com a corretora, sem intermediários.</span></div>
       </div>
     </section>
 
@@ -1169,10 +1398,6 @@
       </div>
     </section>
 
-    <div class="cta-banner">
-      <p>Fale diretamente com a corretora</p>
-      <a class="btn-outline" id="ctaFalar" href="#" target="_blank" rel="noreferrer noopener"><i class="ti ti-brand-whatsapp" aria-hidden="true"></i> Chamar no WhatsApp</a>
-    </div>
 
     <section class="section" id="oportunidades">
       <div class="section-title">Receba oportunidades exclusivas</div>
@@ -1180,8 +1405,8 @@
       <div class="section-sub">Deixe seus dados e seja avisado assim que surgir um imóvel com o seu perfil.</div>
       <div class="lead-form-wrap">
         <div class="lead-form" id="leadForm">
-          <input type="text" id="leadNome" placeholder="Seu nome">
-          <input type="tel" id="leadWpp" placeholder="Seu WhatsApp (com DDD)">
+          <input type="text" id="leadNome" placeholder="Seu nome" autocomplete="name" aria-label="Seu nome">
+          <input type="tel" id="leadWpp" placeholder="Seu WhatsApp (com DDD)" autocomplete="tel" inputmode="tel" aria-label="Seu WhatsApp com DDD">
           <div class="form-row2">
             <select id="leadObjetivo">
               <option value="Comprar">Quero comprar</option>
@@ -1195,8 +1420,10 @@
               <option value="Acima de R$ 700 mil">Acima de R$ 700 mil</option>
             </select>
           </div>
-          <input type="text" id="leadBairro" placeholder="Bairro desejado (opcional)">
-          <button class="btn-gold" onclick="submitLeadForm()">Quero receber oportunidades</button>
+          <input type="text" id="leadBairro" placeholder="Bairro desejado (opcional)" aria-label="Bairro desejado">
+          <div class="form-msg" id="leadMsg" role="alert"></div>
+          <button class="btn-gold" id="leadBtn" onclick="submitLeadForm()">Quero receber oportunidades</button>
+          <div class="lead-trust"><i class="ti ti-lock" aria-hidden="true"></i> Seus dados ficam só com a Flávia. Sem spam.</div>
         </div>
         <div class="lead-success" id="leadSuccess"><i class="ti ti-circle-check" aria-hidden="true"></i> Recebemos seus dados! Em instantes a Flávia entra em contato.</div>
       </div>
@@ -1255,7 +1482,7 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script>
   <script src="/client-config.js"></script>
   <script>
     const sb = window.supabase.createClient(
@@ -1273,10 +1500,9 @@
     function setupWhatsappLinks() {
       const heroMsg = 'Olá, vi seu site e gostaria de receber ajuda para encontrar um imóvel.';
       document.getElementById('heroWppBtn').href = waLink(heroMsg);
+      document.getElementById('topWppBtn').href = waLink(heroMsg);
       document.getElementById('contatoWppBtn').href = waLink(heroMsg);
       document.getElementById('wppFloat').href = waLink(heroMsg);
-      document.getElementById('ctaFalar').href = waLink(heroMsg);
-      document.getElementById('ctaVisita').href = waLink('Olá! Gostaria de agendar uma visita a um imóvel.');
       document.getElementById('ctaAvaliacao').href = waLink('Olá! Gostaria de saber quanto vale meu imóvel (avaliação gratuita).');
     }
 
@@ -1526,6 +1752,10 @@
       }
       if (data.photo_url) {
         document.getElementById('sobreAvatar').innerHTML = `<img src="${data.photo_url}" alt="${data.name || 'Foto da corretora'}" loading="lazy">`;
+        const heroImg = document.getElementById('heroPhotoImg');
+        heroImg.onload = () => document.getElementById('heroGrid').classList.add('has-photo');
+        heroImg.src = data.photo_url;
+        if (data.name) document.getElementById('heroPhotoName').textContent = data.name;
       }
       if (data.bio) document.getElementById('sobreTexto').textContent = data.bio;
       if (data.chips && data.chips.length) {
@@ -1563,22 +1793,33 @@
       const budget_range = document.getElementById('leadFaixa').value;
       const neighborhood = document.getElementById('leadBairro').value.trim();
 
-      if (!name || !whatsapp) {
-        alert('Preencha ao menos nome e WhatsApp.');
+      const msgEl = document.getElementById('leadMsg');
+      const digits = whatsapp.replace(/\D/g, '');
+      if (!name || digits.length < 10 || digits.length > 13) {
+        msgEl.textContent = !name ? 'Por favor, preencha seu nome.' : 'Informe um WhatsApp válido com DDD, ex.: (14) 99999-9999.';
+        msgEl.style.display = 'block';
         return;
       }
+      msgEl.style.display = 'none';
 
-      await sb.from('leads').insert({
-        client_id: CLIENT_ID, name, whatsapp, goal, budget_range, neighborhood, source: 'lead_form'
-      });
+      const btn = document.getElementById('leadBtn');
+      btn.disabled = true;
+      btn.textContent = 'Enviando...';
 
-      document.getElementById('leadForm').style.display = 'none';
-      document.getElementById('leadSuccess').style.display = 'block';
-
+      // Abre o WhatsApp antes do await para o navegador não bloquear o pop-up.
       let msg = `Olá! Meu nome é ${name}.\nObjetivo: ${goal}\nFaixa de investimento: ${budget_range}`;
       if (neighborhood) msg += `\nBairro desejado: ${neighborhood}`;
       msg += '\nGostaria de receber oportunidades de imóveis.';
       window.open(waLink(msg), '_blank', 'noopener');
+
+      try {
+        await sb.from('leads').insert({
+          client_id: CLIENT_ID, name, whatsapp, goal, budget_range, neighborhood, source: 'lead_form'
+        });
+      } catch (e) { /* o WhatsApp já foi aberto como rede de segurança */ }
+
+      document.getElementById('leadForm').style.display = 'none';
+      document.getElementById('leadSuccess').style.display = 'block';
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
